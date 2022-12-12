@@ -1,0 +1,40 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+  .fd-form-item(--horizontal)
+*/
+$block: #{$fd-namespace}-form-item;
+
+$fd-form-label-spacing: 0.5rem !default;
+
+.#{$block} {
+  @include fd-reset();
+
+  position: relative;
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+
+  &--horizontal {
+    flex-direction: row;
+    align-items: center;
+
+    .#{$fd-namespace}-form-label {
+      padding-bottom: 0;
+      margin: auto $fd-form-label-spacing auto 0;
+
+      @include fd-rtl() {
+        margin: auto 0 auto $fd-form-label-spacing;
+      }
+    }
+
+    .#{$fd-namespace}-input {
+      flex: 1;
+    }
+  }
+
+  .#{$fd-namespace}-form-message:not(:first-child) {
+    margin-top: -0.25rem;
+  }
+}

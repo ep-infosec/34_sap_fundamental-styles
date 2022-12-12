@@ -1,0 +1,24 @@
+@import "./new-settings";
+@import "./mixins";
+@import "./form-group";
+
+/*!
+.fd-fieldset
+*/
+$block: #{$fd-namespace}-fieldset;
+
+.#{$block} {
+  @extend .#{$fd-namespace}-form-group;
+
+  min-inline-size: auto;
+
+  &__legend {
+    @include fd-reset();
+
+    display: block;
+
+    &.is-disabled {
+      opacity: var(--sapContent_DisabledOpacity, 0.4);
+    }
+  }
+}

@@ -1,0 +1,330 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-rating-indicator;
+
+@mixin fd-rating-indicator-with-half-star($icon-font-size, $spacing-between-icons) {
+  .#{$block} {
+    &__input {
+      width: calc(#{$icon-font-size} * 0.5);
+      height: $icon-font-size;
+    }
+
+    &__label {
+      margin-right: 0;
+
+      &:nth-child(4n+6) {
+        margin-right: $spacing-between-icons;
+        flex-direction: row-reverse;
+
+        @include fd-rtl() {
+          margin-right: 0;
+          margin-left: $spacing-between-icons;
+
+          &:last-child {
+            margin-left: 0;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      overflow: hidden;
+      width: calc(#{$icon-font-size} * 0.5);
+    }
+
+    &--icon {
+      .#{$block}__label {
+        width: calc(#{$icon-font-size} * 0.5);
+      }
+    }
+
+    @include fd-rating-indicator-labels-after-checked() {
+      width: calc((var(--fontSize) * var(--fdRating_Indicator_View_Mode_Unselected_Icon_Size_Ratio)) * 0.5);
+    }
+  }
+
+  @include fd-disabled() {
+    @include fd-rating-indicator-first-half-label-after-checked() {
+      width: calc(var(--fontSize) * 0.5);
+
+      &::before {
+        font-size: var(--fontSize);
+      }
+      .#{$block}__label {
+        &-unrated {
+          &::before {
+            font-size: var(--fontSize);
+          }
+        }
+      }
+    }
+
+    @include fd-rating-indicator-labels-after-checked() {
+      width: calc((var(--fontSize) * var(--fdRating_Indicator_View_Mode_Unselected_Icon_Size_Ratio)) * 0.5);
+      .#{$block}__label {
+        &-unrated {
+          &::before {
+            font-size: calc(var(--fontSize) * var(--fdRating_Indicator_View_Mode_Unselected_Icon_Size_Ratio));
+          }
+        }
+      }
+    }
+  }
+}
+
+@mixin fd-rating-indicator-first-half-label-after-checked() {
+  .#{$block}__input:nth-child(4n + 3):checked + .#{$block}__label + .#{$block}__input + .#{$block}__label {
+    @content;
+  }
+}
+
+@mixin fd-rating-indicator-labels-after-checked() {
+  .#{$block}__input:checked ~ .#{$block}__input + .#{$block}__label {
+    @content;
+  }
+}
+
+.#{$block} {
+  $fd-rating-indicator-sizes: (
+    "cozy": ("fontSize": 1.5rem, "spacingBetweenIcons": 0.1875rem, "controlMargin": 0.8125rem 0),
+    "compact": ("fontSize": 1rem, "spacingBetweenIcons": 0.125rem, "controlMargin": 0.5rem 0),
+    "condensed": ("fontSize": 1rem, "spacingBetweenIcons": 0.125rem),
+    "xs": ("fontSize": 0.75rem, "spacingBetweenIcons": 1px),
+    "sm": ("fontSize": 1rem, "spacingBetweenIcons": 0.125rem),
+    "md": ("fontSize": 1.375rem, "spacingBetweenIcons": 0.1875rem),
+    "lg": ("fontSize": 2rem, "spacingBetweenIcons": 0.25rem)
+  );
+  $fd-rating-indicator-default-size: map-get($fd-rating-indicator-sizes, 'md');
+
+  --fontSize: #{map_get($fd-rating-indicator-default-size, "fontSize")};
+  --spacingBetweenIcons: #{map_get($fd-rating-indicator-default-size, "spacingBetweenIcons")};
+
+  $fd-rating-indicator-dynamic-text-space: 0.5rem;
+
+  @include fd-reset();
+  @include fd-flex-center();
+  @include fd-reset-spacing();
+
+  @each $set-name, $size-set in $fd-rating-indicator-sizes {
+    &--#{$set-name} {
+      --fontSize: #{map_get($size-set, "fontSize")};
+      --spacingBetweenIcons: #{map_get($size-set, "spacingBetweenIcons")};
+
+      $control-margin: map_get($size-set, "controlMargin");
+
+      @if $control-margin {
+        margin: $control-margin;
+      }
+    }
+  }
+
+  position: relative;
+
+  &__container {
+    border-radius: var(--fdRating_Indicator_Border_Radius);
+
+    @include fd-reset();
+
+    @include fd-fiori-focus-within(var(--fdRating_Indicator_Focus_Outline_Offset, 0)) {
+      // do not show outline for each rating item
+      // keeping it this way in order to preserve fallback behavior for IE
+      .#{$block}__label, .#{$block}__input {
+        outline: none !important;
+      }
+    }
+  }
+
+  &__input {
+    @include fd-reset();
+
+    position: absolute;
+    opacity: 0.0001;
+    z-index: -1;
+    top: 0;
+    width: var(--fontSize);
+    height: var(--fontSize);
+
+    &:checked {
+      // focus for each individual star
+      // will be applied only in IE
+      @include fd-fiori-focus(0) {
+        + .#{$block}__label {
+          outline-offset: 0;
+          outline-width: var(--sapContent_FocusWidth);
+          outline-color: var(--sapContent_FocusColor);
+          outline-style: var(--sapContent_FocusStyle);
+        }
+      }
+    }
+  }
+
+  &__label {
+    @include fd-reset();
+    @include fd-action-cursor();
+    @include fd-flex-vertical-center();
+
+    @include fd-icon-glyph('favorite') {
+      font-family: "SAP-icons";
+      color: var(--sapContent_RatedColor);
+      font-size: var(--fontSize);
+    }
+
+    float: left;
+    opacity: 1;
+    height: var(--fontSize);
+    margin-right: var(--spacingBetweenIcons);
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &:hover::before {
+      opacity: var(--fdRating_Indicator_Selected_Hover_Opacity);
+      transition: opacity $fd-animation-speed ease-in;
+    }
+  }
+
+  @include fd-rating-indicator-labels-after-checked() {
+    @include fd-icon-glyph('unfavorite') {
+      color: var(--sapContent_UnratedColor);
+    }
+  }
+
+  &__dynamic-text {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    font-size: var(--sapFontSmallSize);
+    color: var(--sapContent_LabelColor);
+    margin-left: $fd-rating-indicator-dynamic-text-space;
+  }
+
+  &--hide-dynamic-text {
+    > .#{$block}__dynamic-text {
+      display: none;
+    }
+  }
+
+  @include fd-rtl() {
+    .#{$block}__input:first-child + label {
+      margin-right: 0;
+    }
+
+    .#{$block}__label {
+      float: right;
+
+      &:last-child {
+        margin-right: var(--spacingBetweenIcons);
+      }
+    }
+
+    .#{$block}__dynamic-text {
+      margin-left: 0;
+      margin-right: $fd-rating-indicator-dynamic-text-space;
+    }
+  }
+
+  @include fd-disabled() {
+    pointer-events: none;
+    opacity: var(--fdRating_Indicator_Disabled_Control_Opacity);
+
+    .#{$block}__input {
+      @include fd-icon-glyph('favorite') {
+        color: var(--fdRating_Indicator_Disabled_Selected_Color);
+      }
+    }
+
+    @include fd-rating-indicator-labels-after-checked() {
+      @include fd-icon-glyph('favorite') {
+        color: var(--fdRating_Indicator_Disabled_Unselected_Color);
+        font-size: calc(var(--fontSize) * var(--fdRating_Indicator_View_Mode_Unselected_Icon_Size_Ratio));
+      }
+    }
+  }
+
+  &--display-mode {
+    --fontSize: 1rem;
+
+    .#{$block}__label {
+      margin-right: 0.125rem;
+
+      @include fd-icon-glyph('favorite') {
+        font-size: var(--fontSize);
+        color: var(--fdRating_Indicator_Display_Only_Selected_Color);
+      }
+
+      @include fd-rtl() {
+        margin-right: 0;
+        margin-left: 0.125rem;
+      }
+    }
+  }
+
+  &--non-interactive,
+  &--display-mode {
+    pointer-events: none;
+
+    @include fd-rating-indicator-labels-after-checked() {
+      @include fd-icon-glyph('favorite') {
+        color: var(--sapContent_UnratedColor);
+        font-size: calc(var(--fontSize) * var(--fdRating_Indicator_View_Mode_Unselected_Icon_Size_Ratio));
+      }
+    }
+  }
+
+  &--icon {
+    .#{$block}__label {
+      &::after,
+      &::before {
+        content: none !important;
+      }
+
+      width: var(--fontSize);
+      height: var(--fontSize);
+
+      &-rated,
+      &-unrated {
+        font-size: var(--fontSize);
+        height: 100%;
+        line-height: 1;
+      }
+
+      &-unrated {
+        display: none;
+      }
+    }
+
+    @include fd-rating-indicator-labels-after-checked() {
+      .#{$block}__label {
+        &-rated {
+          display: none;
+        }
+
+        &-unrated {
+          display: block;
+        }
+      }
+    }
+  }
+
+  // ************ BLOCK MODIFIERS ************
+  &--half-star {
+    @include fd-rating-indicator-with-half-star(var(--fontSize), var(--spacingBetweenIcons));
+  }
+
+  &[class*='#{$block}--'] &__input,
+  &[class*='#{$block}--'] &__label,
+  &__input,
+  &__label {
+    &--zero-rating {
+      padding: 0;
+      margin: 0;
+      width: 0;
+      overflow: hidden;
+      opacity: 0.0001;
+    }
+  }
+}

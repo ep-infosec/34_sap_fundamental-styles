@@ -1,0 +1,171 @@
+@import './new-settings';
+@import './mixins';
+@import './mixins/button/button-helper';
+@import './mixins/button/button-types';
+
+$fd-button-icon-font-size: 1rem;
+$fd-button-badge-spacing: 0.25rem;
+
+.#{$block-button} {
+  --fdButton_Height: 2.25rem;
+  --fdButton_Clickable_Height: 2.75rem;
+  --fdButton_Padding_X: 0.625rem;
+
+  @include fd-reset();
+  @include fd-button-reset();
+  @include fd-inline-flex-center();
+  @include fd-set-paddings-x-equal(calc(var(--fdButton_Padding_X) - var(--sapButton_BorderWidth)));
+
+  height: var(--fdButton_Height);
+  max-height: var(--fdButton_Height);
+  min-width: 2.25rem;
+  position: relative;
+  text-align: center;
+  text-shadow: var(--fdButton_Text_Shadow);
+  border-style: solid;
+  border-width: var(--sapButton_BorderWidth);
+
+  // Extended touchable area
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: auto;
+    width: 100%;
+    top: calc((var(--fdButton_Clickable_Height) - var(--fdButton_Height)) * 0.5);
+    bottom: calc((var(--fdButton_Clickable_Height) - var(--fdButton_Height)) * 0.5);
+    left: 0;
+    right: 0;
+  }
+
+  &__text {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    font-weight: inherit;
+    color: inherit;
+  }
+
+  &,
+  &__text {
+    font-family: var(--fdButton_Font_Family);
+  }
+
+  *:not(:first-child) {
+    @include fd-set-margin-left(0.375rem);
+  }
+
+  > [class*='sap-icon'] {
+    color: inherit;
+    width: $fd-button-icon-font-size;
+    min-width: $fd-button-icon-font-size;
+    height: $fd-button-icon-font-size;
+    font-size: $fd-button-icon-font-size;
+    line-height: $fd-button-icon-font-size;
+    font-style: normal;
+    vertical-align: text-bottom;
+
+    &::before,
+    &::after {
+      width: inherit;
+      height: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+  }
+
+  &__badge {
+    @include fd-reset();
+    @include fd-inline-flex-center();
+    @include fd-set-position-right(-$fd-button-badge-spacing);
+
+    height: 1rem;
+    position: absolute;
+    padding: 0 0.3125rem;
+    border-radius: 0.5rem;
+    top: -$fd-button-badge-spacing;
+    font-size: var(--sapFontSmallSize);
+    color: var(--sapContent_BadgeTextColor);
+    border: 0.0625rem solid var(--fdButton_Badge_Border_Color);
+    background-color: var(--sapContent_BadgeBackground);
+  }
+
+  &--compact {
+    --fdButton_Height: 1.625rem;
+    --fdButton_Clickable_Height: 2rem;
+    --fdButton_Padding_X: 0.5rem;
+
+    min-width: 2rem;
+
+    .#{$block-button}__badge {
+      @include fd-set-margin-left($fd-button-badge-spacing);
+
+      position: relative;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  &--menu {
+    @include fd-ellipsis();
+
+    max-width: 12rem;
+
+    &-fixed-width {
+      justify-content: space-between;
+    }
+
+    .#{$block-button}__text {
+      line-height: 1rem;
+    }
+  }
+
+  &--full-width {
+    @include fd-flex-center();
+
+    width: 100%;
+    min-width: 100%;
+  }
+
+  &--text-alignment {
+    &-left {
+      text-align: left;
+      justify-content: flex-start;
+    }
+
+    &-right {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+
+  &--decisive {
+    min-width: 4rem;
+  }
+
+  &__instructions {
+    @include fd-screen-reader-only();
+  }
+
+  @include fd-focus() {
+    @include fd-button-focus(var(--fdButton_Outline_Offset));
+
+    box-shadow: none;
+  }
+
+  // @deprecated selected state
+  @include fd-button-active-selected() {
+    box-shadow: none;
+    outline: none;
+  }
+
+  @include fd-disabled() {
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: var(--sapContent_DisabledOpacity);
+  }
+
+  // Types, including default one
+  @include fd-button-types();
+}

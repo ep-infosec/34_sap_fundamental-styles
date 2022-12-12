@@ -1,0 +1,157 @@
+@import "./mixins";
+@import "./layout-grid";
+
+$block: #{$fd-namespace}-form-layout-grid;
+
+$formContainer: #{$block}-container;
+$formGroup: #{$fd-namespace}-form-group;
+$formItem: #{$fd-namespace}-form-item;
+
+$gridContainer: #{$fd-namespace}-container;
+$gridRow: #{$fd-namespace}-row;
+$gridCol: #{$fd-namespace}-col;
+
+@mixin fd-form-vertical($verticalSelector, $marginTop: 0.625rem) {
+  .#{$gridContainer}.#{$formContainer}.#{$verticalSelector} {
+    &.#{$formGroup},
+    .#{$formGroup} {
+      .#{$formItem} {
+        margin-top: 0.625rem;
+
+        &:first-of-type {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}
+
+@mixin fd-form-col-paddings($colSelector) {
+  $cols: 12;
+
+  .#{$gridContainer}.#{$formContainer} .#{$gridRow} {
+    @for $col from 1 through $cols - 1 {
+      .#{$colSelector}--#{$col} {
+        > .#{$fd-namespace}-form-label {
+          float: right;
+          text-align: right;
+          padding-bottom: 0;
+          width: 100%;
+
+          @include fd-rtl() {
+            float: left;
+            text-align: left;
+          }
+        }
+      }
+    }
+
+    .#{$colSelector},
+    .#{$colSelector}--12 {
+      > .#{$fd-namespace}-form-label {
+        float: left;
+        text-align: left;
+        width: auto;
+        padding-bottom: 0.125rem;
+
+        @include fd-rtl() {
+          text-align: right;
+          float: right;
+        }
+      }
+    }
+  }
+}
+
+.#{$gridContainer}.#{$formContainer} {
+  &.#{$formGroup},
+  .#{$formGroup} {
+    padding: 1rem !important;
+
+    .#{$formGroup} {
+      padding: 0 !important;
+    }
+
+    .#{$formItem} {
+      &--compact {
+        .#{$fd-namespace}-select__control {
+          margin-bottom: 0.1875rem;
+        }
+      }
+
+      .#{$fd-namespace}-select__control {
+        margin: 0.25rem 0;
+      }
+
+      .#{$fd-namespace}-form-label {
+        @include fd-set-margin-right(0);
+
+        white-space: initial;
+
+        &--required {
+          @include fd-set-padding-right(0.5rem);
+        }
+      }
+    }
+  }
+
+  .#{$gridRow} {
+    flex-direction: row;
+
+    .#{$gridCol} {
+      @include fd-ellipsis();
+
+      padding-top: 0;
+      padding-bottom: 0;
+
+      &:not(.#{$formGroup}) {
+        align-self: center;
+      }
+    }
+  }
+}
+
+@media (min-width: 0) {
+  @include fd-form-vertical(#{$formContainer}--vertical);
+  @include fd-form-col-paddings('fd-col');
+}
+
+@media (min-width: 0) and (max-width: 599px) {
+  @include fd-form-vertical(#{$formContainer});
+}
+
+@media (min-width: 600px) {
+  .#{$gridContainer}.#{$formContainer} {
+    $gutter: 0.25rem;
+
+    padding: 0 $gutter;
+
+    .#{$gridRow} {
+      margin: 0 -#{$gutter};
+      min-width: calc(100% + #{$gutter} * 2);
+
+      .#{$gridCol} {
+        padding: 0 $gutter;
+      }
+    }
+  }
+
+  @include fd-form-col-paddings('fd-col-md');
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  @include fd-form-vertical(#{$formContainer}--md-vertical);
+}
+
+@media (min-width: 1024px) {
+  @include fd-form-col-paddings('fd-col-lg');
+}
+
+@media (min-width: 1024px) and (max-width: 1443px) {
+  @include fd-form-vertical(#{$formContainer}--lg-vertical);
+}
+
+@media (min-width: 1440px) {
+  @include fd-form-vertical(#{$formContainer}--xl-vertical);
+  @include fd-form-col-paddings('fd-col-xl');
+}

@@ -1,0 +1,34 @@
+@import "./new-settings";
+@import './mixins';
+
+$block: #{$fd-namespace}-text;
+
+.#{$block} {
+  @include fd-reset();
+
+  &::selection {
+    color: var(--sapContent_ContrastTextColor);
+    background-color: var(--fdText_Selected_Background_Color);
+  }
+
+  &--max-lines {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &--pre-wrap {
+    white-space: pre-wrap;
+  }
+
+  &--hyphenation {
+    hyphens: auto;
+  }
+
+  &__link {
+    &--more {
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+  }
+}

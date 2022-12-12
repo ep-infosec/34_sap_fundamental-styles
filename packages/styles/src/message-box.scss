@@ -1,0 +1,114 @@
+@import "./new-settings";
+@import "./mixins";
+@import "./dialog-placeholders";
+
+$block: #{$fd-namespace}-message-box;
+$bar: #{$fd-namespace}-bar;
+$button: #{$fd-namespace}-button;
+
+$fd-message-box-icon-text-spacing: 0.5rem;
+$fd-message-box-title-icon-text-size: 1rem;
+$fd-message-box-footer-button-min-width: 4rem;
+$fd-message-box-content-padding-x: (s: 1rem, m: 2rem, l: 2rem, xl: 3rem);
+$defaultBoxShadow: var(--sapContent_HeaderShadow);
+$errorBoxShadow: var(--fdMessage_Box_Error_Box_Shadow);
+$successBoxShadow: var(--fdMessage_Box_Success_Box_Shadow);
+$warningBoxShadow: var(--fdMessage_Box_Warning_Box_Shadow);
+$informationBoxShadow: var(--fdMessage_Box_Information_Box_Shadow);
+
+$message-box-states: (
+  "confirmation": ("iconColor": var(--sapNeutralElementColor), "boxShadow": var(--sapContent_HeaderShadow)),
+  "error": ("iconColor": var(--sapNegativeElementColor), "boxShadow": $errorBoxShadow),
+  "success": ("iconColor": var(--sapPositiveElementColor), "boxShadow": $successBoxShadow),
+  "warning": ("iconColor": var(--sapCriticalElementColor), "boxShadow": $warningBoxShadow),
+  "information": ("iconColor": var(--sapInformativeElementColor), "boxShadow": $informationBoxShadow)
+);
+
+.#{$block} {
+  @include fd-reset();
+
+  @extend %dialog;
+
+  display: none;
+
+  // ELEMENTS
+  &__content {
+    @include fd-reset();
+
+    @extend %dialog-content;
+
+    overflow: hidden;
+
+    @each $size-label, $size in $fd-message-box-content-padding-x {
+      &--#{$size-label} {
+        .#{$block}__header.#{$bar},
+        .#{$block}__footer.#{$bar},
+        .#{$block}__body {
+          padding-left: map_get($fd-message-box-content-padding-x, $size-label);
+          padding-right: map_get($fd-message-box-content-padding-x, $size-label);
+        }
+      }
+    }
+
+    &--mobile {
+      @extend %dialog-mobile;
+    }
+  }
+
+  &__header,
+  &__footer {
+    &.#{$bar} {
+      @extend %dialog-paddings;
+    }
+  }
+
+  &__footer {
+    .#{$block}__decisive-button.#{$button} {
+      min-width: $fd-message-box-footer-button-min-width;
+    }
+  }
+
+  &__body {
+    @include fd-reset();
+
+    @extend %dialog-body;
+
+    padding: 1rem;
+  }
+
+  &__title {
+    @include fd-reset();
+
+    @extend %dialog-title;
+  }
+
+  &__more {
+    @include fd-reset();
+
+    margin-top: 1rem;
+  }
+
+  // MODIFIERS
+  &--active {
+    display: flex;
+  }
+
+  @each $set-name, $state-set in $message-box-states {
+    &--#{$set-name} {
+      .#{$block}__header.#{$bar} {
+        box-shadow: map_get($state-set, "boxShadow");
+
+        [class*=sap-icon] {
+          font-size: 1rem;
+          margin-right: $fd-message-box-icon-text-spacing;
+          color: map_get($state-set, "iconColor");
+
+          @include fd-rtl() {
+            margin-right: 0;
+            margin-left: $fd-message-box-icon-text-spacing;
+          }
+        }
+      }
+    }
+  }
+}

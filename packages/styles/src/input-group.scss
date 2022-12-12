@@ -1,0 +1,136 @@
+@import "./new-settings";
+@import "./mixins";
+@import "./mixins/button/button-helper";
+
+/*!
+.fd-input-group+(--inline, --control)
+    .fd-input-group__addon+(--button)
+*/
+
+$block: #{$fd-namespace}-input-group;
+$fd-input-padding: 0.625rem;
+$fd-input-border-radius: var(--sapField_BorderCornerRadius);
+
+.#{$block} {
+  @include fd-input-field-base(false, false);
+  @include fd-input-field-states();
+  @include fd-input-group-button-overwrite();
+
+  padding: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  overflow: hidden;
+
+  .#{$block}__input {
+    @include fd-reset-child-spacing();
+
+    border: none;
+    flex: 1 1 10rem;
+    background: none;
+    background-color: transparent;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    text-shadow: var(--fdInputGroup_Text_Shadow);
+
+    @include fd-hover() {
+      @include fd-input-field-nested-reset();
+    }
+
+    @include fd-focus() {
+      outline: none;
+      box-shadow: none;
+      background: none;
+      border-radius: 0;
+    }
+
+    &:nth-child(1) {
+      @include fd-set-padding-left($fd-input-padding);
+    }
+
+    &:nth-last-child(1) {
+      padding-right: $fd-input-padding;
+
+      @include fd-rtl() {
+        padding-left: $fd-input-padding;
+        padding-right: 0.25rem;
+      }
+    }
+  }
+
+  &--inline {
+    display: inline-flex;
+    vertical-align: bottom;
+    width: auto;
+  }
+
+  &__addon {
+    @include fd-reset();
+    @include fd-flex-center();
+    @include fd-ellipsis();
+
+    color: var(--sapContent_NonInteractiveIconColor);
+    background: none !important;
+    font-size: var(--sapFontLargeSize);
+    min-width: 2.25rem;
+    min-height: $fd-form-input-height;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+
+    span[class*='sap-icon--'] {
+      &::before {
+        font-size: var(--sapFontLargeSize);
+      }
+    }
+
+    &--compact {
+      min-width: 2rem;
+      min-height: $fd-form-input-height--compact;
+    }
+
+    &--readonly {
+      opacity: 0.4;
+    }
+
+    &--button {
+      padding: 0;
+      overflow: visible;
+    }
+  }
+
+  &--control {
+    &[aria-expanded="true"] {
+      margin-bottom: 0;
+    }
+  }
+
+  .#{$fd-namespace}-textarea {
+    resize: vertical;
+  }
+
+  * {
+    // since input-group applies disabled styles, inner elements should not be additionally dimmed
+    @include fd-disabled() {
+      opacity: 1;
+    }
+  }
+
+  &[readonly],
+  &.is-readonly {
+    overflow: visible;
+  }
+
+  .#{$fd-namespace}-tokenizer {
+    @include fd-input-field-nested-reset();
+
+    @include fd-hover () {
+      @include fd-input-field-nested-reset();
+    }
+
+    @include fd-focus () {
+      @include fd-input-field-nested-reset();
+
+      outline: none;
+    }
+  }
+}

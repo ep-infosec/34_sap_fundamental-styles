@@ -1,0 +1,120 @@
+@import "./mixins";
+@import "./new-settings";
+
+$block: #{$fd-namespace}-step-input;
+
+.#{$block} {
+  $fd-button-icon-font-size: 0.875rem;
+  $fd-step-input-cozy-height: 2.25rem;
+  $fd-step-input-compact-height: 1.625rem;
+  $fd-step-input-cozy-button-width: 2.125rem;
+  $fd-step-input-compact-button-width: 1.5rem;
+  $fd-step-input-description-padding: 0.5rem;
+  $fd-step-input-semantic-border-offset: 0.125rem;
+
+  // @include fd-reset();
+  @include fd-input-field-base(true);
+  @include fd-input-field-states(true);
+  @include fd-input-group-button-overwrite();
+
+  position: relative;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+
+  &__button.#{$fd-namespace}-button {
+    width: $fd-step-input-cozy-button-width;
+    min-width: $fd-step-input-cozy-button-width;
+
+    &::before,
+    &::after {
+      font-size: $fd-button-icon-font-size;
+      margin: 0;
+    }
+
+    @include fd-focus() {
+      outline: none;
+
+      @include fd-hover() {
+        z-index: auto;
+      }
+    }
+
+    &--compact {
+      width: $fd-step-input-compact-button-width;
+      min-width: $fd-step-input-compact-button-width;
+    }
+  }
+
+  &__input.#{$fd-namespace}-input {
+    text-align: right;
+    border: none;
+    margin: 0;
+    padding: 0 0.25rem;
+    background: none;
+    background-color: transparent;
+
+    @include fd-rtl() {
+      text-align: left;
+    }
+
+    @include fd-hover() {
+      @include fd-input-field-nested-reset();
+    }
+
+    @include fd-focus() {
+      @include fd-input-field-nested-reset();
+
+      outline: none;
+    }
+
+    &--compact {
+      height: 100%;
+    }
+  }
+
+  &__container {
+    @include fd-flex-vertical-center();
+  }
+
+  /** Width is different due to different border width  */
+  &.is-information,
+  &.is-error,
+  &.is-warning {
+    .#{$block}__button.#{$fd-namespace}-button {
+      width: calc(#{$fd-step-input-cozy-button-width} - #{$fd-step-input-semantic-border-offset});
+      min-width: calc(#{$fd-step-input-cozy-button-width} - #{$fd-step-input-semantic-border-offset});
+    }
+  }
+
+  &--compact {
+    height: $fd-step-input-compact-height;
+    min-height: $fd-step-input-compact-height;
+
+    /** Width is different due to different border width  */
+    &.is-information,
+    &.is-error,
+    &.is-warning {
+      .#{$block}__button.#{$fd-namespace}-button {
+        width: calc(#{$fd-step-input-compact-button-width} - #{$fd-step-input-semantic-border-offset});
+        min-width: calc(#{$fd-step-input-compact-button-width} - #{$fd-step-input-semantic-border-offset});
+      }
+    }
+  }
+
+  &.is-readonly {
+    .#{$block}__button.#{$fd-namespace}-button {
+      display: none;
+    }
+
+    @include fd-focus-within() {
+      background: var(--sapField_Focus_Background);
+      border-radius: var(--sapField_BorderCornerRadius);
+
+      .#{$block}__input {
+        background: transparent;
+      }
+    }
+  }
+}

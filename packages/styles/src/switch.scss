@@ -1,0 +1,335 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+.fd-switch+(--no-border)
+    .fd-switch__content+()
+    .fd-switch__title+()
+*/
+$block: #{$fd-namespace}-switch;
+
+@mixin fd-slider-track-position($off-position, $on-position) {
+  --fdSwitch_Track_Offset: translate(#{$off-position}, -50%);
+
+  .#{$block}__input:checked + .#{$block}__slider {
+    --fdSwitch_Track_Offset: translate(#{$on-position}, -50%);
+  }
+}
+
+.#{$block} {
+
+  $fd-switch-off-opacity: 0;
+  $fd-switch-transition: all 0.1s;
+
+  $fd-switch-label-width: 1.75rem;
+
+  $fd-switch-track-compact-offset: 0.8125rem;
+
+  $fd-switch-handle-offset: (
+    "default": (
+      "ltr": (
+        "off": calc(var(--fdSwitch_Handle_Offset) * -1),
+        "on": calc(var(--fdSwitch_Active_Handle_Offset) * -1)
+      ),
+      "rtl": (
+        "off": var(--fdSwitch_Handle_Offset),
+        "on": var(--fdSwitch_Active_Handle_Offset)
+      )
+    ),
+    "compact": (
+      "ltr": (
+        "off": -$fd-switch-track-compact-offset,
+        "on": calc(var(--fdSwitch_Compact_Active_Handle_Offset) * -1)
+      ),
+      "rtl": (
+        "off": $fd-switch-track-compact-offset,
+        "on": var(--fdSwitch_Compact_Semantic_Active_Handle_Offset_Rtl)
+      )
+    ),
+    "semantic": (
+      "ltr": (
+        "off": calc(var(--fdSwitch_Semantic_Handle_Offset) * -1),
+        "on": calc(var(--fdSwitch_Semantic_Handle_Active_Offset) * -1)
+      ),
+      "rtl": (
+        "off": var(--fdSwitch_Semantic_Handle_Offset),
+        "on": var(--fdSwitch_Semantic_Handle_Active_Offset)
+      )
+    ),
+    "compactSemantic": (
+      "ltr": (
+        "off": var(--fdSwitch_Compact_Semantic_Handle_Offset),
+        "on": calc(var(--fdSwitch_Compact_Semantic_Active_Handle_Offset) * -1)
+      ),
+      "rtl": (
+        "off": calc(var(--fdSwitch_Compact_Semantic_Handle_Offset) * -1),
+        "on": var(--fdSwitch_Compact_Semantic_Active_Handle_Offset)
+      )
+    )
+  );
+
+  @include fd-reset();
+  @include fd-form-label();
+
+  overflow: initial;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--fdSwitch_Padding);
+
+  @include fd-disabled() {
+    cursor: auto;
+    pointer-events: none;
+    opacity: var(--sapContent_DisabledOpacity);
+  }
+
+  &__control {
+    display: inline-block;
+    position: relative;
+  }
+
+  &__slider {
+    @include fd-reset();
+
+    background-color: var(--fdSwitch_Track_Background);
+    box-sizing: content-box;
+    width: var(--fdSwitch_Width);
+    height: var(--fdSwitch_Height);
+    border: var(--fdSwitch_Border);
+    transition: $fd-switch-transition;
+    border-radius: var(--fdSwitch_Border_Radius);
+    box-shadow: var(--fdSwitch_Shadow);
+    border-color: var(--fdSwitch_Border_Color);
+  }
+
+  &__track {
+    @include fd-reset();
+
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    transition: $fd-switch-transition;
+    min-width: 4.25rem;
+    transform: var(--fdSwitch_Track_Offset);
+  }
+
+  @include fd-slider-track-position(map-get($fd-switch-handle-offset, "default", "ltr", "off"), map-get($fd-switch-handle-offset, "default", "ltr", "on"));
+
+  &__text {
+    @include fd-form-label();
+
+    align-self: auto;
+    cursor: inherit;
+  }
+
+  &__icon {
+    position: var(--fdSwitch_Semantic_Icon_Position);
+
+    @include fd-icon-selector() {
+      @include fd-flex-center();
+
+      width: $fd-switch-label-width;
+      min-width: $fd-switch-label-width;
+      font-size: var(--fdSwitch_Icon_Size);
+      line-height: 1.375rem;
+      transition: visibility 0s ease 0.03s, opacity 0s ease 0.03s;
+    }
+
+    &--off {
+      @include fd-icon-selector() {
+        color: var(--fdSwitch_Semantic_Handle_Error_Color);
+        margin: var(--fdSwitch_Icon_Error_Margin);
+      }
+    }
+
+    &--on {
+      @include fd-icon-selector() {
+        color: var(--fdSwitch_Semantic_Handle_Success_Color);
+        margin: var(--fdSwitch_Icon_Success_Margin);
+        visibility: hidden;
+        opacity: $fd-switch-off-opacity;
+      }
+    }
+  }
+
+  &__handle {
+    @include fd-reset();
+
+    box-sizing: var(--fdSwitch_Slider_Box_Sizing);
+    border: var(--fdSwitch_Handle_Border_Width) solid var(--fdSwitch_Handle_Border_Color);
+    background-color: var(--fdSwitch_Handle_Background);
+    min-width: var(--fdSwitch_Handle_Width);
+    min-height: var(--fdSwitch_Handle_Height);
+    border-radius: var(--fdSwitch_Handle_Border_Radius);
+    background-clip: padding-box;
+  }
+
+  &__input {
+    @include fd-reset();
+
+    opacity: $fd-switch-off-opacity;
+    width: 0;
+    height: 0;
+    position: absolute;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    &:hover,
+    &:active {
+      border-color: transparent;
+    }
+  }
+
+  @include fd-disabled() {
+    pointer-events: none;
+    opacity: var(--sapContent_DisabledOpacity);
+  }
+
+  &__input:focus + .#{$block}__slider {
+    &::before {
+      position: absolute;
+      display: block;
+      border-width: var(--sapContent_FocusWidth);
+      border-color: var(--sapContent_FocusColor);
+      border-style: var(--sapContent_FocusStyle);
+      content: '';
+      top: var(--fdSwitch_Focus_Outline_Vertical_Offset);
+      bottom: var(--fdSwitch_Focus_Outline_Vertical_Offset);
+      left: var(--fdSwitch_Focus_Outline_Horizontal_Offset);
+      right: var(--fdSwitch_Focus_Outline_Horizontal_Offset);
+      border-radius: var(--fdSwitch_Focus_Outline_Border_Radius);
+    }
+  }
+
+  &__input:checked + &__slider {
+    --fdSwitch_Track_Background: var(--sapButton_Track_Selected_Background);
+    --fdSwitch_Shadow: var(--fdSwitch_Active_Shadow);
+    --fdSwitch_Handle_Background: var(--sapButton_Selected_Background);
+    --fdSwitch_Handle_Border_Color: var(--sapButton_Selected_BorderColor);
+    --fdSwitch_Border_Color: var(--sapButton_Selected_BorderColor);
+
+    .#{$block}__icon {
+      &--off {
+        @include fd-icon-selector() {
+          opacity: $fd-switch-off-opacity;
+          visibility: hidden;
+        }
+      }
+
+      &--on {
+        @include fd-icon-selector() {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  @include fd-rtl() {
+    .#{$block}__icon {
+      &--on {
+        margin: var(--fdSwitch_Icon_Error_Margin);
+      }
+
+      &--off {
+        margin: var(--fdSwitch_Icon_Success_Margin);
+      }
+    }
+
+    @include fd-slider-track-position(map-get($fd-switch-handle-offset, "default", "rtl", "off"), map-get($fd-switch-handle-offset, "default", "rtl", "on"));
+  }
+
+  @include fd-hover() {
+    --fdSwitch_Track_Background: var(--fdSwitch_On_Hover_Slider_Background);
+    --fdSwitch_Shadow: var(--fdSwitch_On_Hover_Slider_Shadow);
+    --fdSwitch_Handle_Border_Color: var(--fdSwitch_Handle_Hover_Border_Color);
+    --fdSwitch_Handle_Background: var(--fdSwitch_Hover_Handle_Background);
+    --fdSwitch_Border_Color: var(--fdSwitch_On_Hover_Slider_Border);
+
+    .#{$block}__input:checked + .#{$block}__slider {
+      --fdSwitch_Track_Background: var(--fdSwitch_On_Hover_Slider_Active_Background);
+      --fdSwitch_Shadow: var(--fdSwitch_On_Hover_Slider_Active_Shadow);
+      --fdSwitch_Handle_Background: var(--fdSwitch_Hover_Handle_Active_Background);
+      --fdSwitch_Handle_Border_Color: var(--fdSwitch_Handle_Selected_Hover_Border_Color);
+    }
+  }
+
+  &--compact {
+    --fdSwitch_Padding: var(--fdSwitch_Compact_Padding);
+    --fdSwitch_Handle_Width: var(--fdSwitch_Compact_Handle_Width);
+    --fdSwitch_Handle_Height: var(--fdSwitch_Compact_Handle_Height);
+    --fdSwitch_Width: var(--fdSwitch_Compact_Width);
+    --fdSwitch_Height: var(--fdSwitch_Compact_Height);
+    --fdSwitch_Icon_Size: var(--fdSwitch_Compact_Icon_Size);
+
+    .#{$block}__track {
+      min-width: 3.125rem;
+    }
+
+    @include fd-slider-track-position(map-get($fd-switch-handle-offset, "compact", "ltr", "off"), map-get($fd-switch-handle-offset, "compact", "ltr", "on"));
+
+    @include fd-rtl() {
+      @include fd-slider-track-position(map-get($fd-switch-handle-offset, "compact", "rtl", "off"), map-get($fd-switch-handle-offset, "compact", "rtl", "on"));
+    }
+  }
+
+  &--semantic {
+    --fdSwitch_Width: var(--fdSwitch_Semantic_Width);
+    --fdSwitch_Height: var(--fdSwitch_Semantic_Height);
+    --fdSwitch_Track_Background: var(--fdSwitch_Semantic_Error_Background_Color);
+    --fdSwitch_Shadow: var(--fdSwitch_Semantic_Error_Box_Shadow);
+    --fdSwitch_Handle_Background: var(--fdSwitch_Semantic_Error_Handle_Background_Color);
+    --fdSwitch_Handle_Border_Color: var(--fdSwitch_Semantic_Error_Handle_Border_Color);
+    --fdSwitch_Border_Color: var(--sapErrorBorderColor);
+
+    @include fd-slider-track-position(map-get($fd-switch-handle-offset, "semantic", "ltr", "off"), map-get($fd-switch-handle-offset, "semantic", "ltr", "on"));
+
+    .#{$block}__input:checked + .#{$block}__slider {
+      --fdSwitch_Track_Background: var(--fdSwitch_Semantic_Success_Background_Color);
+      --fdSwitch_Shadow: var(--fdSwitch_Semantic_Success_Box_Shadow);
+      --fdSwitch_Handle_Border_Color: var(--fdSwitch_Semantic_Success_Handle_Border_Color);
+      --fdSwitch_Handle_Background: var(--fdSwitch_Semantic_Success_Handle_Background_Color);
+      --fdSwitch_Border_Color: var(--fdSwitch_Semantic_Success_Handle_Border_Color);
+    }
+
+    &.#{$block}--compact {
+      --fdSwitch_Width: var(--fdSwitch_Compact_Semantic_Width);
+      --fdSwitch_Height: var(--fdSwitch_Compact_Semantic_Height);
+
+      padding: 0.1875rem 0;
+
+      @include fd-slider-track-position(map-get($fd-switch-handle-offset, "compactSemantic", "ltr", "off"), map-get($fd-switch-handle-offset, "compactSemantic", "ltr", "on"));
+    }
+
+    @include fd-hover() {
+      --fdSwitch_Track_Background: var(--fdSwitch_Semantic_Hover_Error_Background_Color);
+      --fdSwitch_Shadow: var(--fdSwitch_Semantic_Hover_Error_Box_Shadow);
+      --fdSwitch_Handle_Background: var(--fdSwitch_Semantic_Error_Handle_Hover_Background_Color);
+      --fdSwitch_Handle_Border_Color: var(--fdSwitch_Semantic_Error_Handle_Hover_Border_Color);
+      --fdSwitch_Semantic_Handle_Error_Color: var(--fdSwitch_Semantic_Hover_Error_Color);
+      --fdSwitch_Semantic_Handle_Success_Color: var(--fdSwitch_Semantic_Hover_Success_Color);
+      --fdSwitch_Border_Color: var(--fdSwitch_Semantic_Hover_Error_Border_Color);
+
+      .#{$block}__input:checked + .#{$block}__slider {
+        --fdSwitch_Track_Background: var(--fdSwitch_Semantic_Hover_Success_Background_Color);
+        --fdSwitch_Shadow: var(--fdSwitch_Semantic_Hover_Success_Box_Shadow);
+        --fdSwitch_Handle_Background: var(--fdSwitch_Semantic_Success_Handle_Hover_Background_Color);
+        --fdSwitch_Handle_Border_Color: var(--fdSwitch_Semantic_Success_Handle_Hover_Border_Color);
+        --fdSwitch_Border_Color: var(--fdSwitch_Semantic_Hover_Success_Border_Color);
+      }
+    }
+
+    @include fd-rtl() {
+      @include fd-slider-track-position(map-get($fd-switch-handle-offset, "semantic", "rtl", "off"), map-get($fd-switch-handle-offset, "semantic", "rtl", "on"));
+
+      &.#{$block}--compact {
+        @include fd-slider-track-position(map-get($fd-switch-handle-offset, "compactSemantic", "rtl", "off"), map-get($fd-switch-handle-offset, "compactSemantic", "rtl", "on"));
+      }
+    }
+  }
+}

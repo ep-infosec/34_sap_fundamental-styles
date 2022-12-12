@@ -1,0 +1,25 @@
+@import "mixins/mixins";
+
+$block: fd-scrollbar;
+
+.#{$block} {
+  @include fd-reset();
+  @include fd-scrollbar();
+
+  overflow: auto;
+
+  &--container {
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-corner {
+      background-color: var(--fdScrollbar_Track_Color);
+      border-radius: 0 var(--fdScrollbar_Border_Radius) var(--fdScrollbar_Border_Radius) 0;
+    }
+
+    @include fd-rtl() {
+      &::-webkit-scrollbar-track,
+      &::-webkit-scrollbar-corner {
+        border-radius: var(--fdScrollbar_Border_Radius) 0 0 var(--fdScrollbar_Border_Radius);
+      }
+    }
+  }
+}

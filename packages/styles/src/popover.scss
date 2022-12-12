@@ -1,0 +1,380 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-popover;
+
+$fd-popover-z-index: map-get($fd-z-index-levels, "top") !default;
+$fd-popover-arrow-size: 0.5rem !default;
+$fd-popover-arrow-size-inner: calc(#{$fd-popover-arrow-size} - var(--fdPopover_Border_Width)) !default;
+$fd-popover-arrow-color: var(--fdPopover_Border_Color) !default;
+$fd-popover-arrow-offset-y: calc(var(--fdIcon_Button_Height) * 0.5 - #{$fd-popover-arrow-size} - var(--fdPopover_Border_Width));
+$fd-popover-arrow-offset-x: calc(var(--fdIcon_Button_Width) * 0.5 - #{$fd-popover-arrow-size} - var(--fdPopover_Border_Width));
+
+@mixin fd-popover-arrow-x-end() {
+  &::before {
+    left: auto;
+    right: calc(#{$fd-popover-arrow-offset-x} + var(--fdPopover_Border_Width));
+  }
+
+  &::after {
+    left: auto;
+    right: #{$fd-popover-arrow-offset-x};
+  }
+
+  @include fd-rtl() {
+    &::before {
+      left: calc(#{$fd-popover-arrow-offset-x} + var(--fdPopover_Border_Width));
+      right: auto;
+    }
+
+    &::after {
+      left: #{$fd-popover-arrow-offset-x};
+      right: auto;
+    }
+  }
+}
+
+.#{$block} {
+  @include fd-reset();
+
+  --fdPopover_Offset: 100%;
+  --fdPopover_Center_Offset: 50%;
+
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+
+  &__control {
+    @include fd-reset();
+    @include fd-action-cursor();
+
+    position: relative;
+
+    &:focus-visible {
+      outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+    }
+
+    @include fd-expanded() {
+      > * {
+        margin-bottom: 0;
+      }
+    }
+
+    @include fd-disabled() {
+      pointer-events: none;
+    }
+  }
+
+  &__wrapper {
+    @include fd-reset();
+    @include fd-popover-border-radius();
+    @include fd-scrollbar(var(--fdScrollbar_Border_Radius));
+
+    overflow: auto;
+  }
+
+  &__body {
+    --fdIcon_Button_Height: 2.25rem;
+    --fdIcon_Button_Width: 2.25rem;
+
+    @include fd-reset();
+    @include fd-popover-border-radius();
+
+    position: absolute;
+    white-space: nowrap;
+    box-shadow: $fd-popover-box-shadow;
+    z-index: $fd-popover-z-index;
+    background: $fd-popover-background-color;
+    top: calc(var(--fdPopover_Offset) + #{$fd-popover-arrow-size});
+    transition: all $fd-animation-speed;
+    opacity: 1;
+    visibility: visible;
+
+    @include fd-both-pseudo-selectors() {
+      content: "";
+      position: absolute;
+    }
+
+    &::before {
+      @include fd-popover-triangle(top, $fd-popover-background-color, $fd-popover-arrow-size-inner);
+
+      top: calc(-#{$fd-popover-arrow-size} + var(--fdPopover_Border_Width));
+      z-index: $fd-popover-z-index + 2;
+    }
+
+    &::after {
+      @include fd-popover-triangle(top, $fd-popover-arrow-color, $fd-popover-arrow-size);
+
+      top: -$fd-popover-arrow-size;
+      z-index: $fd-popover-z-index + 1;
+    }
+
+    // Inner shadows can affect outer shadow. This will discard such behavior
+    > * {
+      &:not(.#{$block}__wrapper) {
+        overflow: hidden;
+      }
+    }
+
+    > *:first-child,
+    &-header > *:first-child,
+    ul:first-child li:first-child::before,
+    ol:first-child li:first-child::before,
+    ul:first-child li:first-child a::before,
+    ol:first-child li:first-child a::before {
+      border-top-right-radius: $fd-popover-border-radius;
+      border-top-left-radius: $fd-popover-border-radius;
+    }
+
+    > *:last-child,
+    &-footer > *:last-child,
+    ul:last-child li:last-child::before,
+    ol:last-child li:last-child::before,
+    ul:last-child li:last-child a::before,
+    ol:last-child li:last-child a::before {
+      border-bottom-right-radius: $fd-popover-border-radius;
+      border-bottom-left-radius: $fd-popover-border-radius;
+    }
+
+    &--compact {
+      --fdIcon_Button_Height: 1.625rem;
+      --fdIcon_Button_Width: 2rem;
+    }
+
+    // works properly only if dropdown below the control
+    &--no-arrow {
+      box-shadow: $fd-popover-box-shadow-no-arrow;
+      top: var(--fdPopover_Offset);
+
+      @include fd-both-pseudo-selectors() {
+        display: none;
+      }
+    }
+
+    &,
+    &--left {
+      @include fd-set-position-left(0);
+
+      &::before {
+        left: calc(#{$fd-popover-arrow-offset-x} + var(--fdPopover_Border_Width));
+      }
+
+      &::after {
+        left: #{$fd-popover-arrow-offset-x};
+      }
+
+      @include fd-rtl() {
+        &::before {
+          left: auto;
+          right: calc(#{$fd-popover-arrow-offset-x} + var(--fdPopover_Border_Width));
+        }
+
+        &::after {
+          left: auto;
+          right: #{$fd-popover-arrow-offset-x};
+        }
+      }
+    }
+
+    &--center {
+      @include fd-set-position-left(var(--fdPopover_Center_Offset));
+
+      transform: translateX(calc(var(--fdPopover_Center_Offset) * -1));
+
+      @include fd-rtl() {
+        transform: translateX(var(--fdPopover_Center_Offset));
+      }
+    }
+
+    &--right {
+      @include fd-set-position-left(auto);
+      @include fd-set-position-right(0);
+
+      // @deprecated, fd-popover__body--arrow-x-end to be used instead
+      @include fd-popover-arrow-x-end();
+    }
+
+    &--before {
+      top: 0;
+      left: auto !important;
+      right: var(--fdPopover_Offset) !important;
+    }
+
+    &--after {
+      top: 0;
+      right: auto !important;
+      left: var(--fdPopover_Offset) !important;
+    }
+
+    &--middle {
+      top: var(--fdPopover_Center_Offset);
+      transform: translateY(calc(var(--fdPopover_Center_Offset) * -1));
+    }
+
+    &--bottom {
+      top: auto;
+      bottom: 0;
+    }
+
+    &--above {
+      top: auto;
+      bottom: var(--fdPopover_Offset);
+    }
+
+    &--arrow {
+      &-bottom {
+        bottom: calc(var(--fdPopover_Offset) + #{$fd-popover-arrow-size}) !important;
+
+        &::before {
+          @include fd-popover-triangle(bottom, $fd-popover-background-color, $fd-popover-arrow-size-inner);
+
+          top: 100%;
+        }
+
+        &::after {
+          @include fd-popover-triangle(bottom, $fd-popover-arrow-color, $fd-popover-arrow-size);
+
+          top: 100%;
+        }
+      }
+
+      &-left {
+        left: calc(var(--fdPopover_Offset) + #{$fd-popover-arrow-size}) !important;
+
+        &::before {
+          @include fd-popover-triangle(left, $fd-popover-background-color, $fd-popover-arrow-size-inner);
+
+          top: calc(#{$fd-popover-arrow-offset-y} + var(--fdPopover_Border_Width));
+          left: auto !important;
+          right: 100% !important;
+        }
+
+        &::after {
+          @include fd-popover-triangle(left, $fd-popover-arrow-color, $fd-popover-arrow-size);
+
+          top: #{$fd-popover-arrow-offset-y};
+          left: auto !important;
+          right: 100% !important;
+        }
+      }
+
+      &-right {
+        right: calc(var(--fdPopover_Offset) + #{$fd-popover-arrow-size}) !important;
+
+        &::before {
+          @include fd-popover-triangle(right, $fd-popover-background-color, $fd-popover-arrow-size-inner);
+
+          top: calc(#{$fd-popover-arrow-offset-y} + var(--fdPopover_Border_Width));
+          left: 100% !important;
+          right: auto !important;
+        }
+
+        &::after {
+          @include fd-popover-triangle(right, $fd-popover-arrow-color, $fd-popover-arrow-size);
+
+          top: #{$fd-popover-arrow-offset-y};
+          left: 100% !important;
+          right: auto !important;
+        }
+      }
+
+      &-x-center {
+        @include fd-both-pseudo-selectors() {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        @include fd-rtl() {
+          @include fd-both-pseudo-selectors() {
+            left: auto;
+            right: 50%;
+            transform: translateX(50%);
+          }
+        }
+      }
+
+      &-x-end {
+        @include fd-popover-arrow-x-end();
+      }
+
+      &-y-center {
+        @include fd-both-pseudo-selectors() {
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+
+      &-y-end {
+        &::before {
+          top: auto;
+          bottom: calc(#{$fd-popover-arrow-offset-y} + var(--fdPopover_Border_Width));
+        }
+
+        &::after {
+          top: auto;
+          bottom: #{$fd-popover-arrow-offset-y};
+        }
+      }
+    }
+
+    &--dropdown {
+      width: max-content;
+
+      &-fill {
+        display: block;
+        max-width: 40rem;
+        width: $fd-popover-full-filled-width;
+      }
+    }
+
+    // For NGX where we manage positioning with Material Overlay CDK but not CSS
+    &--static {
+      position: relative;
+
+      --fdPopover_Offset: 0%;
+      --fdPopover_Center_Offset: 0%;
+    }
+
+    &[aria-hidden="true"],
+    &.is-hidden {
+      z-index: -1;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    // @deprecated
+    .#{$block}__body--hidden {
+      display: none;
+    }
+
+    &--input-message-group {
+      box-shadow: none;
+      border: none;
+      margin-top: -0.25rem;
+    }
+
+    &--inline-help {
+      padding: 0.75rem;
+      font-size: var(--sapFontSmallSize);
+
+      &-icon {
+        --fdIcon_Button_Height: 1.375rem;
+        --fdIcon_Button_Width: 1.375rem;
+      }
+    }
+  }
+
+  // @deprecated, fd-popover__body--input-message-group to be used instead
+  &--input-message-group {
+    .#{$block}__body,
+    .#{$block}__body--no-arrow {
+      box-shadow: none;
+      border: none;
+      margin-top: -0.25rem;
+    }
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+}

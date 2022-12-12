@@ -1,0 +1,41 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-input;
+
+.#{$block} {
+  @include fd-input-field-base();
+  @include fd-reset-webkit-input-buttons();
+
+  &[aria-expanded="false"] {
+    z-index: 0;
+  }
+
+  @include fd-expanded() {
+    z-index: 4;
+  }
+
+  &:last-child {
+    margin-bottom: $fd-form-input-margin;
+  }
+
+  &--compact {
+    @include fd-input-field-base-compact();
+  }
+
+  &--no-number-spinner {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    -moz-appearance: textfield;
+  }
+
+  &.right-align {
+    text-align: right;
+  }
+
+  @include fd-input-field-states();
+}

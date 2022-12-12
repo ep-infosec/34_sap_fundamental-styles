@@ -1,0 +1,11 @@
+@mixin dragged {
+  background-color: var(--sapList_Background);
+  cursor: grabbing;
+  box-shadow: var(--sapContent_Shadow2);
+  @content;
+}
+
+.drag-placeholder {
+  position: absolute;
+  opacity: 0.3;
+}

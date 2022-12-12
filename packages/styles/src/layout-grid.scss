@@ -1,0 +1,157 @@
+@use "sass:math";
+
+// https://github.com/stylelint/stylelint/issues/5133#issuecomment-834145196
+/* stylelint-disable */
+@import "./mixins";
+/* stylelint-enable */
+
+$blockContainer: #{$fd-namespace}-container;
+$blockRow: #{$fd-namespace}-row;
+$blockCol: #{$fd-namespace}-col;
+
+$gutter: 0.5rem;
+$gutter-small: 0.25rem;
+
+$size: (600 :"md", 1024: "lg", 1440: "xl");
+$md: 600;
+$lg: 1024;
+$xl: 1440;
+$cols: 12;
+
+@mixin fd-row-nested($gutter) {
+  .#{$blockRow} {
+    @include fd-set-margins-x-equal(-$gutter);
+
+    min-width: calc(100% + #{$gutter} * 2);
+  }
+
+  > .#{$blockRow} > .#{$blockCol} {
+    @include fd-set-paddings-y-equal($gutter);
+  }
+}
+
+@mixin fd-column-full() {
+  min-width: math.div(1, 12) * 100%;
+  max-width: none;
+  flex: 1;
+}
+
+@mixin fd-column-responsive($sizePrefix: null) {
+  $classPrefix: #{$blockCol};
+
+  @if ($sizePrefix) {
+    $classPrefix: $blockCol + '-' + $sizePrefix;
+  }
+
+  @for $n from 0 through $cols {
+    .#{$classPrefix}--#{$n} {
+      min-width: math.div($n, $cols) * 100%;
+      max-width: math.div($n, $cols) * 100%;
+    }
+
+    .#{$classPrefix}--offset-#{$n} {
+      @include fd-set-margin-left(math.div($n, $cols) * 100%);
+    }
+
+    .#{$classPrefix}--offset-after-#{$n} {
+      @include fd-set-margin-right(math.div($n, $cols) * 100%);
+    }
+  }
+}
+
+.#{$blockContainer},
+.#{$blockRow},
+.#{$blockCol} {
+  @include fd-reset();
+}
+
+.#{$blockContainer} {
+  @include fd-row-nested($gutter-small);
+
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 0 100%;
+  position: relative;
+  padding: 0 $gutter-small;
+
+  &.#{$blockContainer}--no-horizontal-gap,
+  &.#{$blockContainer}--no-gap {
+    .#{$blockRow} {
+      @include fd-reset-margins-x();
+
+      .#{$blockCol} {
+        @include fd-reset-paddings-x();
+      }
+    }
+  }
+
+  &.#{$blockContainer}--no-vertical-gap,
+  &.#{$blockContainer}--no-gap {
+    > .#{$blockRow} > .#{$blockCol} {
+      @include fd-reset-paddings-y();
+    }
+  }
+
+  @include fd-rtl() {
+    direction: rtl;
+  }
+}
+
+.#{$blockRow} {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 0 100%;
+  position: relative;
+  min-width: 100%;
+}
+
+.#{$blockCol} {
+  @include fd-set-paddings-x-equal($gutter-small);
+
+  @at-root {
+    @include fd-column-responsive();
+  }
+
+  min-width: 100%;
+  max-width: 100%;
+
+  &--full {
+    @include fd-column-full();
+  }
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 600px) {
+  .#{$blockContainer} {
+    @include fd-row-nested($gutter);
+
+    padding: 0 $gutter;
+  }
+
+  .#{$blockCol} {
+    @include fd-set-paddings-x-equal($gutter);
+
+    @at-root {
+      @include fd-column-responsive(map-get($size, $md));
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .#{$blockCol} {
+    @at-root {
+      @include fd-column-responsive(map-get($size, $lg));
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .#{$blockCol} {
+    @at-root {
+      @include fd-column-responsive(map-get($size, $xl));
+    }
+  }
+}

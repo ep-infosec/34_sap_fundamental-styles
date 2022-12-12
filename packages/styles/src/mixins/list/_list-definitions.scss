@@ -1,0 +1,182 @@
+@import "../../new-settings";
+@import "../../mixins";
+
+$block: #{$fd-namespace}-list;
+
+$objectListBlock: #{$fd-namespace}-object-list;
+
+$fd-list-item-padding-x: 1rem !default;
+$fd-list-large-font-size: var(--sapFontLargeSize) !default;
+$fd-list-normal-font-size: var(--sapFontSize) !default;
+$fd-list-selected-state-border-bottom: var(--sapList_BorderWidth) solid var(--sapList_SelectionBorderColor);
+
+$fd-list-byline-item-padding-x: 1rem !default;
+$fd-list-byline-item-padding-y: 1rem !default;
+$fd-list-byline-borderless-item-padding-y: 0.5rem !default;
+
+$fd-list-selection-container-width: 2.75rem !default;
+
+$semantic-color: (
+  "neutral": ("color": var(--sapNeutralTextColor)),
+  "positive": ("color": var(--sapPositiveTextColor)),
+  "critical": ("color": var(--sapCriticalTextColor)),
+  "negative": ("color": var(--sapNegativeTextColor)),
+  "informative": ("color": var(--sapInformativeTextColor))
+);
+
+@mixin fd-list-part-elements() {
+  .#{$block}__title,
+  .#{$block}__secondary,
+  .#{$block}__icon,
+  .#{$block}__content,
+  .#{$block}__byline,
+  .#{$block}__byline-left,
+  .#{$block}__byline-right,
+  .#{$block}__thumbnail,
+  &.#{$block}__link--navigation-indicator::after,
+  & {
+    @content;
+  }
+
+  @each $set-name, $color-set in $semantic-color {
+    .#{$block}__byline-right--#{$set-name} {
+      @content;
+    }
+  }
+}
+
+@mixin fd-list-fake-outline() {
+  &:focus,
+  &.is-focus {
+    outline: none;
+    pointer-events: all;
+
+    &::before {
+      content: '';
+      position: absolute;
+      display: block;
+      border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+      top: 0.125rem;
+      left: 0.125rem;
+      right: 0.125rem;
+      bottom: 0.125rem;
+      pointer-events: none;
+
+      @content;
+    }
+
+    @include fd-active() {
+      &::before {
+        border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--fdList_Active_Outline_Color);
+      }
+    }
+  }
+}
+
+@mixin fd-list-item-base-selected-state() {
+  background: var(--sapList_SelectionBackgroundColor);
+  border-bottom: $fd-list-selected-state-border-bottom;
+}
+
+@mixin fd-list-item-selected-state() {
+  @include fd-list-item-base-selected-state();
+
+  .#{$block}__link {
+    background: inherit;
+
+    @include fd-active() {
+      background: var(--sapList_Active_Background);
+    }
+  }
+
+  @include fd-hover() {
+    background: var(--sapList_Hover_SelectionBackground);
+  }
+}
+
+@mixin fd-list-item-base-active-state() {
+  background: var(--sapList_Active_Background);
+
+  @include fd-hover() {
+    background: var(--sapList_Active_Background);
+  }
+
+  @include fd-selected() {
+    background: var(--sapList_Active_Background);
+
+    @include fd-hover() {
+      background: var(--sapList_Active_Background);
+    }
+  }
+}
+
+@mixin fd-list-item-active-state() {
+  @include fd-list-item-base-active-state();
+
+  @include fd-list-part-elements() {
+    color: var(--sapList_Active_TextColor);
+    text-shadow: none;
+  }
+}
+
+@mixin fd-list-item-hover-state() {
+  background: var(--sapList_Hover_Background);
+}
+
+@mixin fd-list-item-states() {
+  @include fd-hover() {
+    @include fd-list-item-hover-state();
+  }
+
+  @include fd-selected() {
+    @include fd-list-item-selected-state();
+  }
+
+  @include fd-active() {
+    @include fd-list-item-active-state();
+  }
+}
+
+@mixin fd-list-ie11-active-state-fix() {
+  // :active selector has issues in IE11 when there are nested elements.
+  // The solution is to remove the pointer events from the nested elements.
+  pointer-events: none;
+}
+
+@mixin fd-list-reset-item-paddings() {
+  .#{$block}__item--link {
+    padding: 0;
+  }
+}
+
+@mixin fd-list-navigation-byline-borderless() {
+  .#{$block}__item--link {
+    .#{$block}__link {
+      @include fd-set-paddings-y-equal(0.5rem);
+    }
+  }
+
+  .#{$block}__item--link:first-child {
+    padding-top: 0;
+
+    .#{$block}__link {
+      padding-top: 1rem;
+    }
+
+    .#{$block}__link--navigation-indicator::after {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .#{$block}__item--link:last-child {
+    padding-bottom: 0;
+
+    .#{$block}__link {
+      padding-bottom: 1rem;
+    }
+
+    .#{$block}__link--navigation-indicator::after {
+      margin-top: 0.25rem;
+    }
+  }
+}

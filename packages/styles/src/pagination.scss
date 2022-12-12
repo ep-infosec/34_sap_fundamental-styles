@@ -1,0 +1,158 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+.fd-pagination
+*/
+
+$block: #{$fd-namespace}-pagination;
+
+@mixin fd-pagination-mobile() {
+  .#{$block}__per-page + .#{$block}__nav {
+    @include fd-set-margins-x(auto, 0);
+  }
+
+  .#{$block}__total,
+  .#{$block}__per-page-label,
+  .#{$block}__link,
+  .#{$block}__more {
+    display: none;
+  }
+
+  .#{$block}__button--mobile,
+  .#{$block}__label,
+  .#{$block}__input {
+    display: flex;
+  }
+
+  .#{$block}__link {
+    @include fd-active() {
+      display: none;
+    }
+  }
+}
+
+.#{$block} {
+  @include fd-reset();
+
+  @include fd-flex-vertical-center() {
+    justify-content: space-between;
+  }
+
+  padding: 0 1rem;
+  height: 2.75rem;
+  width: 100%;
+
+  &__per-page {
+    @include fd-reset();
+    @include fd-flex-center();
+  }
+
+  &__nav {
+    @include fd-reset();
+    @include fd-flex-center();
+    @include fd-set-margins-x-equal(auto);
+  }
+
+  &__more {
+    @include fd-reset();
+
+    &::before {
+      content: "...";
+      display: block;
+      width: 2.25rem;
+      text-align: center;
+    }
+
+    &--compact::before {
+      width: 2rem;
+    }
+  }
+
+  &__more,
+  .#{$block}__button,
+  .#{$block}__link,
+  .#{$block}__input,
+  .#{$block}__label {
+    @include fd-set-margins-x-equal(0.125rem);
+  }
+
+  .#{$block}__input {
+    width: auto;
+    min-width: 2.5rem;
+    text-align: center;
+
+    /** Hide arrows so the text will be centered in the input. */
+
+    /** Firefox */
+    -moz-appearance: textfield;
+
+    /** WebKit/Blink */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .#{$block}__label,
+  .#{$block}__per-page-label {
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .#{$block}__label {
+    display: none;
+  }
+
+  .#{$block}__total-label {
+    margin: 0;
+  }
+
+  .#{$block}__link {
+    /** :active links still should be displayed */
+    &.is-active {
+      display: none;
+    }
+  }
+
+  .#{$block}__button {
+    [class*='sap-icon'] {
+      @include fd-rtl() {
+        transform: rotate(180deg);
+      }
+    }
+
+    &--mobile {
+      display: none;
+    }
+  }
+
+  &--short {
+    .#{$block}__link {
+      @include fd-active() {
+        display: flex;
+      }
+    }
+
+    .#{$block}__input {
+      display: none;
+    }
+  }
+
+  &--mobile {
+    @include fd-pagination-mobile();
+  }
+}
+
+@include fd-media-sm() {
+  .#{$block} {
+    @include fd-pagination-mobile();
+  }
+}
+
+@include fd-media-md() {
+  .#{$block} {
+    @include fd-pagination-mobile();
+  }
+}

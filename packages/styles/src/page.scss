@@ -1,0 +1,57 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-page;
+
+.#{$block} {
+  @include fd-reset();
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--sapBackgroundColor);
+
+  &__content {
+    @include fd-reset();
+
+    padding: 0;
+  }
+
+  &__content--s {
+    @include fd-reset();
+
+    padding: 0 1rem;
+  }
+
+  &__content--m_l {
+    @include fd-reset();
+
+    padding: 0 2rem;
+  }
+
+  &__content--xl {
+    @include fd-reset();
+
+    padding: 0 3rem;
+  }
+
+  &--solid {
+    background: var(--sapBackgroundColor);
+  }
+
+  &--list {
+    background: var(--fdPage_List_Background);
+  }
+
+  &--transparent {
+    background: var(--fdPage_Transparent_Background);
+  }
+
+  &--home {
+    &.#{$block}__content--S {
+      @include fd-reset();
+
+      padding: 0 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+.fd-counter+(--notification)
+*/
+$block: #{$fd-namespace}-counter;
+
+.#{$block} {
+  @include fd-reset();
+
+  border-radius: 0.5rem;
+  color: var(--sapContent_BadgeTextColor);
+  background-color: var(--sapContent_BadgeBackground);
+  border: 0.0625rem solid var(--fdBadge_Border_Color);
+  font-size: var(--sapFontSmallSize);
+  line-height: 0.875rem;
+  display: inline-block;
+  text-align: center;
+  padding: 0 0.3125rem;
+  z-index: 1;
+  height: 1rem;
+
+  &--notification {
+    transform: translate(-40%, -50%);
+
+    @include fd-rtl() {
+      transform: translate(40%, -50%);
+    }
+  }
+}

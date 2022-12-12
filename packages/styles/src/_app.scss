@@ -1,0 +1,61 @@
+@import "./mixins";
+
+/*!
+.fd-app
+  .fd-app__navigation+(--horizontal|--vertical)
+  .fd-app__sidebar
+  .fd-app__main
+*/
+$block: #{$fd-namespace}-app;
+
+.#{$block} {
+  $fd-app-navigation-background-color: var(--sapGroup_ContentBackground) !default;
+  $fd-app-sidebar-width: 15.625rem !default;
+
+  position: relative;
+  width: 100%;
+
+  @include fd-screen(m) {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+  }
+
+  &__navigation {
+    background-color: $fd-app-navigation-background-color;
+    height: 3.25rem;
+    max-height: 3.25rem;
+    display: flex;
+
+    &--horizontal {
+      flex: 1 100%;
+      padding: 0 0.5rem;
+
+      @include fd-screen(m) {
+        padding: 0 2rem;
+      }
+
+      @include fd-screen(xl) {
+        padding: 0 3rem;
+      }
+    }
+
+    &--vertical {
+      overflow-y: auto;
+      flex: 0;
+
+      @include fd-screen(m) {
+        max-width: 0.5rem;
+        position: relative;
+        height: 100%;
+        max-height: inherit;
+      }
+    }
+  }
+
+  &__main {
+    flex: 1 1;
+    overflow-y: auto;
+    height: 100%;
+  }
+}

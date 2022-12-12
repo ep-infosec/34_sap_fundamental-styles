@@ -1,0 +1,95 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-message-page;
+
+.#{$block} {
+  @include fd-reset();
+  @include fd-flex-center();
+
+  width: 100%;
+  height: 100%;
+  background: var(--sapBackgroundColor);
+
+  &__container,
+  &__content,
+  &__title,
+  &__subtitle,
+  &__actions,
+  &__more {
+    @include fd-reset();
+
+    max-width: 30rem;
+  }
+
+  &__container {
+    @include fd-flex(column) {
+      align-items: center;
+    }
+
+    padding: 1rem;
+    background: var(--fdMessage_Page_Container_Background);
+    border-radius: var(--fdMessage_Page_Container_Corner_Radius);
+  }
+
+  &__illustration-container {
+    @include fd-reset();
+
+    max-width: 20rem;
+    max-height: 15rem;
+  }
+
+  &__icon-container {
+    @include fd-reset();
+    @include fd-flex-center();
+
+    width: 100%;
+    height: 8rem;
+  }
+
+  &__icon {
+    @include fd-icon-element-base() {
+      max-width: 30rem;
+      font-size: 6rem;
+      color: var(--sapContent_NonInteractiveIconColor);
+      opacity: 50%;
+    }
+  }
+
+  &__content {
+    @include fd-flex(column) {
+      align-items: center;
+    }
+
+    padding-bottom: 2rem;
+  }
+
+  &__title {
+    margin-top: var(--fdMessage_Page_Title_Margin_Top);
+    margin-bottom: var(--fdMessage_Page_Title_Margin_Bottom);
+    text-align: center;
+    font-size: var(--sapFontHeader2Size);
+    color: var(--sapGroup_TitleTextColor);
+  }
+
+  &__subtitle {
+    margin-bottom: 2rem;
+    font-size: var(--sapFontHeader5Size);
+    color: var(--sapContent_LabelColor);
+  }
+
+  &__actions {
+    @include fd-flex-center() {
+      flex-wrap: wrap;
+    }
+
+    min-height: 2rem;
+  }
+
+  &__more {
+    @include fd-flex-center();
+
+    min-height: 2rem;
+    margin-top: 0.5rem;
+  }
+}

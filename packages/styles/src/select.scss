@@ -1,0 +1,155 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-select;
+$fd-select-padding-x: 0.625rem;
+$fd-select-padding-x-compact: 0.5rem;
+
+@mixin fd-select-set-min-width($width) {
+  min-width: calc(#{$width} - var(--sapField_BorderWidth) * 2);
+}
+
+@mixin fd-select-button-settings($bkgdColor, $borderLeft) {
+  .#{$block}__button {
+    color: var(--sapButton_Active_TextColor);
+    background: var(--sapField_BackgroundStyle);
+    background-color: $bkgdColor;
+    border-left-color: $borderLeft;
+    box-shadow: var(--fdInput_Group_Button_Box_Shadow);
+    @content;
+  }
+}
+
+@mixin fd-select-states-overwrite() {
+  $fd-select-states: (
+    'success': (
+      'activeColor': var(--fdInput_Group_Button_Success_Active_Text_Color),
+      'background': var(--sapField_SuccessBackgroundStyle),
+      'hoverBoxShadow': var(--fdInput_Success_Box_Shadow_Hover)
+    ),
+    'error': (
+      'activeColor': var(--fdInput_Group_Button_Error_Active_Text_Color),
+      'background': var(--sapField_InvalidBackgroundStyle),
+      'hoverBoxShadow': var(--fdInput_Error_Box_Shadow_Hover)
+    ),
+    'warning': (
+      'activeColor': var(--fdInput_Group_Button_Warning_Active_Text_Color),
+      'background': var(--sapField_WarningBackgroundStyle),
+      'hoverBoxShadow':  var(--fdInput_Warning_Box_Shadow_Hover)
+    ),
+    'alert': (
+      'activeColor': var(--fdInput_Group_Button_Warning_Active_Text_Color),
+      'background': var(--sapField_WarningBackgroundStyle),
+      'hoverBoxShadow':  var(--fdInput_Warning_Box_Shadow_Hover)
+    ),
+    'information': (
+      'activeColor': var(--fdInput_Group_Button_Information_Active_Text_Color),
+      'background': var(--sapField_InformationBackgroundStyle),
+      'hoverBoxShadow':  var(--fdInput_Information_Box_Shadow_Hover)
+    )
+  );
+
+  @each $set-name, $set-props in $fd-select-states {
+    &.is-#{$set-name} {
+      @include fd-expanded() {
+        box-shadow: map_get($set-props, "hoverBoxShadow");
+
+        .#{$block}__button {
+          color: map_get($set-props, "activeColor");
+          background: map_get($set-props, "background");
+          background-color: var(--sapButton_Selected_Background);
+          border-left-color: var(--fdSelect_Expanded_Button_Border_Left_Color);
+          box-shadow: map_get($set-props, "hoverBoxShadow");
+        }
+
+        @include fd-focus() {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+.#{$block} {
+  @include fd-reset();
+
+  text-shadow: var(--fdSelect_Text_Shadow);
+
+  &__control {
+    @include fd-input-field-base();
+    @include fd-input-field-states();
+    @include fd-input-group-button-overwrite();
+
+    @include fd-flex-center() {
+      justify-content: space-between;
+    }
+
+    @include fd-disabled() {
+      pointer-events: none;
+    }
+
+    padding: 0;
+    cursor: pointer;
+    margin-bottom: 0;
+
+    .#{$block}__button {
+      @include fd-set-margin-left(0.25rem);
+      @include fd-input-group-button-overwrite();
+    }
+
+    @include fd-readonly() {
+      cursor: text;
+
+      .#{$block}__text-content {
+        @include fd-set-paddings-x-equal($fd-select-padding-x);
+        @include fd-select-set-min-width(5rem);
+      }
+    }
+
+    @include fd-expanded() {
+      box-shadow: var(--fdInput_Box_Shadow_Hover);
+
+      @include fd-select-button-settings(var(--sapButton_Selected_Background), var(--fdSelect_Expanded_Button_Border_Left_Color)
+    );
+
+      @include fd-focus() {
+        box-shadow: none;
+      }
+
+      @include fd-hover() {
+        @include fd-select-button-settings(var(--sapButton_Selected_Hover_Background), var(--fdSelect_Expanded_Button_Border_Left_Color_Hover)
+      );
+      }
+    }
+
+    @include fd-select-states-overwrite();
+  }
+
+  &__text-content {
+    @include fd-reset();
+    @include fd-ellipsis();
+    @include fd-set-padding-left($fd-select-padding-x);
+    @include fd-select-set-min-width(2.5rem);
+
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  &--compact {
+    .#{$block}__control {
+      height: $fd-form-input-height--compact;
+      min-height: $fd-form-input-height--compact;
+
+      .#{$block}__text-content {
+        @include fd-set-padding-left($fd-select-padding-x-compact);
+        @include fd-select-set-min-width(2.75rem);
+      }
+
+      @include fd-readonly() {
+        .#{$block}__text-content {
+          @include fd-set-paddings-x-equal($fd-select-padding-x-compact);
+        }
+      }
+    }
+  }
+}

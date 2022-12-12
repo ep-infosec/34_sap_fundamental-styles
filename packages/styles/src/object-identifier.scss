@@ -1,0 +1,38 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-object-identifier;
+
+.#{$block} {
+  $fd-object-identifier-title-font-size: var(--sapFontLargeSize);
+  $fd-object-identifier-title-font-weight: bold;
+
+  .#{$block}__link {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  &__title {
+    @include fd-reset();
+
+    color: var(--sapList_TextColor);
+    font-size: $fd-object-identifier-title-font-size;
+
+    &--bold {
+      font-weight: $fd-object-identifier-title-font-weight;
+    }
+  }
+
+  &__text {
+    @include fd-reset();
+
+    margin-top: 0.5rem;
+    color: var(--sapContent_LabelColor);
+  }
+
+  &--medium {
+    .#{$block}__title {
+      font-size: var(--sapFontSize);
+    }
+  }
+}

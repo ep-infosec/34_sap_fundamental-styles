@@ -1,0 +1,89 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+.fd-object-marker
+*/
+$block: #{$fd-namespace}-object-marker;
+
+$fd-object-marker-color: var(--sapContent_MarkerIconColor) !default;
+$fd-object-marker-text-color: var(--sapContent_LabelColor) !default;
+$fd-object-marker-color-hover: var(--sapContent_IconColor) !default;
+$fd-object-marker-padding-left: 0.5rem !default;
+$fd-object-marker-padding-right: 0.25rem !default;
+
+.#{$block} {
+  @include fd-reset();
+
+  max-width: 100%;
+  line-height: 1;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+
+  &--link {
+    @include fd-link();
+
+    text-decoration: none;
+
+    &,
+    .#{$block}__text {
+      color: $fd-object-marker-color;
+    }
+
+    @include fd-focus() {
+      .#{$block}__icon,
+      .#{$block}__text {
+        color: var(--fdLink_Text_Focus_Color);
+      }
+
+      .#{$block}__text {
+        text-decoration: underline;
+      }
+    }
+
+    @include fd-hover() {
+      .#{$block}__text {
+        color: $fd-object-marker-color-hover;
+        text-decoration: underline;
+      }
+    }
+
+    &:visited {
+      .#{$block}__text {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__icon {
+    @include fd-icon-element-base() {
+      @include fd-flex-center();
+      @include fd-set-padding-right($fd-object-marker-padding-right);
+
+      font-size: 1rem;
+      line-height: normal;
+      color: $fd-object-marker-color;
+
+      @include fd-only-child() {
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+  }
+
+  &__text {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    font-size: 1rem;
+    font-style: normal;
+    line-height: normal;
+    word-break: break-word;
+    color: $fd-object-marker-text-color;
+  }
+
+  & + & {
+    @include fd-set-margin-left($fd-object-marker-padding-left);
+  }
+}

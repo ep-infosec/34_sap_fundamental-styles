@@ -1,0 +1,51 @@
+@import './new-settings';
+@import './mixins';
+
+/*!
+.fd-link
+*/
+$block: #{$fd-namespace}-link;
+
+.#{$block} {
+  @include fd-reset();
+  @include fd-link();
+
+  @include fd-icon-selector() {
+    color: var(--sapLinkColor);
+
+    &:first-child {
+      @include fd-set-margin-right(var(--fdLink_Icon_Spacing, 0));
+    }
+
+    &:last-child {
+      @include fd-set-margin-left(var(--fdLink_Icon_Spacing, 0));
+    }
+  }
+
+  @include fd-hover() {
+    @include fd-icon-selector() {
+      text-decoration: var(--fdLink_Text_Decoration_Hover);
+      color: var(--sapLink_Hover_Color);
+    }
+  }
+
+  @include fd-focus() {
+    @include fd-icon-selector() {
+      text-decoration: var(--fdLink_Text_Decoration_Focus);
+      color: var(--fdLink_Text_Focus_Color);
+    }
+  }
+
+  @include fd-active() {
+    @include fd-icon-selector() {
+      text-decoration: var(--fdLink_Text_Decoration_Active);
+      color: var(--sapLink_Active_Color);
+    }
+  }
+
+  &:visited {
+    @include fd-icon-selector() {
+      color: var(--sapLink_Visited_Color);
+    }
+  }
+}

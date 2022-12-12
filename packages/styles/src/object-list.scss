@@ -1,0 +1,159 @@
+@import "./new-settings";
+@import "./mixins";
+@import "./list";
+
+$block: #{$fd-namespace}-object-list;
+
+$fd-object-list-with-padding-big: 1rem;
+$fd-object-list-with-padding-small: 0.75rem;
+$fd-object-list-font-color: var(--sapContent_LabelColor);
+
+@mixin fd-object-list-text-align($align) {
+  text-align: $align;
+
+  @include fd-rtl() {
+    text-align: if($align == left, right, left);
+  }
+}
+
+.#{$block} {
+  &__item {
+    @include fd-set-paddings-y-equal(1rem);
+
+    height: 100%;
+
+    .#{$fd-namespace}-list__link {
+      @include fd-active() {
+        .#{$block}__intro,
+        .#{$block}__object-attribute,
+        .#{$fd-namespace}-avatar,
+        .#{$fd-namespace}-object-identifier__title,
+        .#{$fd-namespace}-object-marker__text,
+        .#{$fd-namespace}-object-marker__icon,
+        .#{$fd-namespace}-object-number__text,
+        .#{$fd-namespace}-object-number__unit,
+        .#{$fd-namespace}-object-status__text,
+        .#{$fd-namespace}-object-status__icon {
+          color: var(--sapList_Active_TextColor);
+          text-shadow: none;
+        }
+      }
+    }
+  }
+
+  &__intro {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    width: 100%;
+    max-width: 100%;
+    color: $fd-object-list-font-color;
+    padding-bottom: $fd-object-list-with-padding-small;
+  }
+
+  &__container {
+    @include fd-reset();
+    @include fd-flex(column);
+
+    height: 100%;
+    width: 100%;
+  }
+
+  &__header {
+    @include fd-reset();
+
+    display: flex;
+
+    &-left:not(:first-child) {
+      @include fd-set-margin-left($fd-object-list-with-padding-small);
+    }
+  }
+
+  &__header-left {
+    @include fd-reset();
+    @include fd-object-list-text-align(left);
+
+    width: 60%;
+  }
+
+  &__header-right {
+    @include fd-reset();
+    @include fd-set-padding-left($fd-object-list-with-padding-big);
+    @include fd-object-list-text-align(right);
+
+    width: 40%;
+  }
+
+  &__row {
+    @include fd-reset();
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    > *:only-child {
+      width: 100%;
+    }
+  }
+
+  &__row-left,
+  &__row-right {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    width: 50%;
+    line-height: 1;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+  }
+
+  &__row-left {
+    @include fd-object-list-text-align(left);
+    @include fd-set-padding-left(0);
+  }
+
+  &__row-right {
+    @include fd-object-list-text-align(right);
+    @include fd-set-padding-right(0);
+
+    .#{$fd-namespace}-object-status {
+      &__text {
+        @include fd-ellipsis();
+      }
+    }
+  }
+
+  &__content {
+    @include fd-reset();
+
+    margin-top: 0.25rem;
+  }
+
+  &__object-number {
+    .#{$fd-namespace}-object-number__text {
+      font-size: var(--fdObject_List_Number_Font_Size);
+      display: block;
+
+      &::after {
+        content: none;
+      }
+    }
+  }
+
+  &__object-identifier {
+    .#{$fd-namespace}-object-identifier__title {
+      @include fd-line-clamp($lines: 2);
+
+      font-size: var(--fdObject_List_Title_Font_Size);
+      font-weight: var(--fdObject_List_Title_Font_Weight);
+      color: var(--sapGroup_TitleTextColor);
+      line-height: 1.5;
+    }
+  }
+
+  &__object-attribute {
+    @include fd-reset();
+    @include fd-ellipsis();
+
+    color: $fd-object-list-font-color;
+  }
+}

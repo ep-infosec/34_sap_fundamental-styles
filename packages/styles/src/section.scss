@@ -1,0 +1,98 @@
+@import "./mixins";
+
+/*!
+.fd-section+(--full-bleed, --no-border)
+    .fd-section__header
+        .fd-section__title
+        .fd-section__actions
+    .fd-section__footer
+*/
+$block: #{$fd-namespace}-section;
+
+.#{$block} {
+  $fd-section-padding--top: 1rem !default;
+  $fd-section-padding--bottom: 1.5rem !default;
+  $fd-section-header-margin--bottom: 1.5rem !default;
+
+  @include fd-reset();
+  @include fd-clearfix();
+
+  padding-top: $fd-section-padding--top;
+  padding-bottom: $fd-section-padding--bottom;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  @include fd-screen(m) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  @include fd-screen(xl) {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  border-bottom: none;
+  background-color: var(--sapToolbar_Background);
+
+  &:last-child,
+  &--no-border {
+    border-bottom: 0;
+  }
+
+  &--full-bleed,
+  &--bleed {
+    @include fd-reset();
+
+    padding-right: 0;
+    padding-left: 0;
+
+    .#{$block}__header,
+    .#{$block}__footer {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+
+      @include fd-screen(m) {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      @include fd-screen(xl) {
+        padding-left: 3rem;
+        padding-right: 3rem;
+      }
+    }
+  }
+
+  &__header {
+    @include fd-reset();
+
+    min-height: 1.5rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: $fd-section-header-margin--bottom;
+  }
+
+  &__title {
+    @include fd-reset();
+
+    font-size: var(--sapFontHeader2Size);
+    line-height: 2rem;
+    color: var(--sapTitleColor);
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  &__actions {
+    @include fd-reset();
+
+    margin-left: auto;
+  }
+
+  &__footer {
+    @include fd-reset();
+
+    display: flex;
+    justify-content: center;
+  }
+}

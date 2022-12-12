@@ -1,0 +1,116 @@
+@import "./mixins";
+@import "./avatar";
+@import "./avatar-variables";
+
+/*!
+.fd-avatar-group+((--individual|--group), (--xs|--s|--m|--l|--xl)
+*/
+$block: #{$fd-namespace}-avatar-group;
+
+.#{$block} {
+  @include fd-reset();
+  @include fd-flex();
+
+  &__popover-control[tabindex="0"],
+  &--group-type[tabindex="0"] {
+    @include fd-fake-fiori-focus(
+      var(--fdAvatarGroup_Focus_Outline_Offset),
+      var(--fdAvatarGroup_Focus_Outline_Radius)
+    );
+
+    cursor: pointer;
+  }
+
+  &__focusable-avatar,
+  &__item[tabindex="0"] {
+    @include fd-avatar-group-item-focus(
+      var(--fdAvatar_Focus_Outline_Offset),
+      var(--fdAvatar_Focus_Outline_Radius_Circle)
+    );
+  }
+
+  &--group-type {
+    .#{$block}__more-button {
+      pointer-events: none;
+    }
+  }
+
+  &__item {
+    @include fd-reset();
+
+    position: relative;
+    display: inline-block;
+  }
+
+  &__more-button {
+    @include fd-fake-fiori-focus(
+      var(--fdAvatar_Focus_Outline_Offset),
+      var(--fdAvatar_Focus_Outline_Radius_Circle)
+    );
+
+    outline: none !important;
+
+    .#{$block}__button-text {
+      font-size: inherit;
+    }
+  }
+
+  &__overflow-body {
+    @include fd-reset();
+
+    padding: 1rem;
+    white-space: initial;
+
+    &--no-padding {
+      padding: 0;
+    }
+
+    &--no-horizontal-scroll {
+      overflow-x: hidden;
+    }
+
+    &--no-vertical-scroll {
+      overflow-y: hidden;
+    }
+
+    .#{$block}__item {
+      margin: 0.25rem;
+    }
+  }
+
+  @each $set-name, $size-set in $fd-avatar-sizes {
+    &--#{$set-name} {
+      .#{$block}__item {
+        @include fd-avatar-set-size(map_get($size-set, "ratio"));
+      }
+
+      .#{$block}__more-button {
+        @include fd-avatar-set-size(map_get($size-set, "ratio"));
+
+        border-radius: 25rem;
+        font-size: map_get($size-set, "font-size");
+        border-width: var(--fdAvatarGroup_MoreButton_Border);
+      }
+    }
+  }
+
+  @each $type-name, $type-set in $fd-avatar-group-item-spacing {
+    @each $size-name, $size-set in map_get($fd-avatar-group-item-spacing, $type-name) {
+      &--#{$type-name}-type {
+        &.#{$block}--#{$size-name} {
+          .#{$block}__item {
+            @include fd-set-margins-x(0, map_get($size-set, "margin-right"));
+          }
+        }
+      }
+    }
+  }
+
+  @each $accent-name, $color-set in $fd-avatar-accent-colors {
+    .#{$block}__more-button--accent-color-#{$accent-name} {
+      border: map_get($color-set, "border");
+      color: map_get($color-set, "text-color");
+      background-color: map_get($color-set, "background-color");
+    }
+  }
+}

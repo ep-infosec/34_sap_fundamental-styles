@@ -1,0 +1,751 @@
+@import "states";
+
+// utils
+@mixin fd-reset {
+  font-size: var(--sapFontSize);
+  line-height: var(--sapContent_LineHeight);
+  color: var(--sapTextColor);
+  font-family: var(--sapFontFamily);
+  font-weight: normal;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+
+  &::before,
+  &::after {
+    box-sizing: inherit;
+    font-size: inherit;
+  }
+}
+
+@mixin fd-reset-spacing {
+  padding: 0;
+  margin: 0;
+}
+
+@mixin fd-reset-child-spacing {
+  &:nth-child(n + 1) {
+    margin: 0;
+  }
+}
+
+@mixin fd-reset-webkit-input-buttons {
+  &[type="search"]::-webkit-search-decoration,
+  &[type="search"]::-webkit-search-cancel-button,
+  &[type="search"]::-webkit-search-results-button,
+  &[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+@mixin fd-children {
+  &:nth-child(n + 1) {
+    @content;
+  }
+}
+
+@mixin fd-clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin fd-last-child {
+  &:last-child {
+    margin-bottom: 0;
+    margin-right: 0;
+    @content;
+  }
+}
+
+@mixin fd-first-child {
+  &:first-child {
+    margin-left: 0;
+    @content;
+  }
+}
+
+@mixin fd-only-child {
+  &:first-child:last-child {
+    @content;
+  }
+}
+
+@mixin fd-screen($size, $dimension: width) {
+  @if map-has-key($fd-breakpoints, $size) {
+    @media (min-#{$dimension}: map-get($fd-breakpoints, $size)) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown `#{$size}` in $fd-breakpoints map";
+  }
+}
+
+@mixin fd-print() {
+  @media print {
+    @content;
+  }
+}
+
+@mixin fd-button-reset {
+  background-image: none;
+  display: inline-block;
+  appearance: none;
+  outline: 0;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: var(--sapButton_BorderCornerRadius);
+
+  &::-moz-focus-inner {
+    border: 0;
+  }
+  @content;
+}
+
+@mixin fd-rtl {
+  @at-root {
+    [dir="rtl"] &,
+    &[dir="rtl"] {
+      @content;
+    }
+  }
+}
+
+// using pseudo elements with attributes (e.g. [some-selector::before[dir="rtl"] ) is not acceptable by browser
+// creating a new mixin for rtl instead of fixing existing one to be sure nothing is broken
+@mixin fd-rtl-pseudo {
+  @at-root {
+    [dir="rtl"] & {
+      @content;
+    }
+  }
+}
+
+@mixin fd-link-underline() {
+  text-decoration: var(--fdLink_Text_Decoration, none);
+
+  &__content {
+    text-decoration: var(--fdLink_Text_Content_Decoration, none);
+  }
+
+  @include fd-hover() {
+    --fdLink_Text_Decoration: var(--fdLink_Text_Decoration_Hover, none);
+    --fdLink_Text_Content_Decoration: var(--fdLink_Text_Content_Decoration_Hover, none);
+  }
+
+  @include fd-focus() {
+    --fdLink_Text_Decoration: var(--fdLink_Text_Decoration_Focus, none);
+    --fdLink_Text_Content_Decoration: var(--fdLink_Text_Content_Decoration_Focus, none);
+  }
+
+  @include fd-active() {
+    --fdLink_Text_Decoration: var(--fdLink_Text_Decoration_Active, none);
+    --fdLink_Text_Content_Decoration: var(--fdLink_Text_Content_Decoration_Active, none);
+  }
+
+  @include fd-disabled() {
+    --fdLink_Text_Decoration: var(--fdLink_Text_Decoration_Disabled, none);
+    --fdLink_Text_Content_Decoration: var(--fdLink_Text_Content_Decoration_Disabled, none);
+  }
+
+  &--subtle {
+    --fdLink_Text_Content_Decoration: var(--fdLink_Text_Content_Decoration_Subtle, none);
+    --fdLink_Text_Content_Decoration_Hover: var(--fdLink_Text_Content_Decoration_Subtle_Hover, none);
+    --fdLink_Text_Content_Decoration_Active: var(--fdLink_Text_Content_Decoration_Subtle_Active, none);
+    --fdLink_Text_Decoration: var(--fdLink_Text_Decoration_Subtle, none);
+    --fdLink_Text_Decoration_Hover: var(--fdLink_Text_Decoration_Subtle_Hover, none);
+    --fdLink_Text_Decoration_Active: var(--fdLink_Text_Decoration_Subtle_Active, none);
+  }
+
+  &--undecorated {
+    --fdLink_Text_Decoration: none;
+    --fdLink_Text_Decoration_Subtle: none;
+    --fdLink_Text_Decoration_Subtle_Hover: none;
+    --fdLink_Text_Decoration_Subtle_Active: none;
+    --fdLink_Text_Decoration_Hover: none;
+    --fdLink_Text_Decoration_Focus: none;
+    --fdLink_Text_Decoration_Active: none;
+    --fdLink_Text_Decoration_Visited: none;
+    --fdLink_Text_Decoration_Disabled: none;
+    --fdLink_Text_Content_Decoration: none;
+    --fdLink_Text_Content_Decoration_Subtle: none;
+    --fdLink_Text_Content_Decoration_Subtle_Hover: none;
+    --fdLink_Text_Content_Decoration_Subtle_Active: none;
+    --fdLink_Text_Content_Decoration_Hover: none;
+    --fdLink_Text_Content_Decoration_Focus: none;
+    --fdLink_Text_Content_Decoration_Active: none;
+    --fdLink_Text_Content_Decoration_Visited: none;
+    --fdLink_Text_Content_Decoration_Disabled: none;
+  }
+}
+
+@mixin fd-link() {
+  cursor: pointer;
+  color: var(--sapLinkColor);
+  text-shadow: var(--sapContent_TextShadow);
+  display: var(--fdLink_Display, inline-block);
+  align-items: center;
+  transition: all $fd-animation-speed ease-in;
+  line-height: inherit;
+
+  @include fd-link-underline();
+
+  &--emphasized {
+    font-weight: bold;
+  }
+
+  &:visited {
+    color: var(--sapLink_Visited_Color);
+  }
+
+  @include fd-hover() {
+    color: var(--sapLink_Hover_Color);
+  }
+
+  @include fd-focus() {
+    box-shadow: none;
+    color: var(--fdLink_Text_Focus_Color);
+    background-color: var(--fdLink_Focus_Background);
+    border-radius: var(--fdLink_Focus_Border_Radius);
+    text-shadow: var(--fdLink_Focus_Text_Shadow);
+    outline-offset: var(--fdLink_Hover_Outline_Offset);
+    outline-width: var(--fdLink_Hover_Outline_Width);
+    outline-color: var(--fdLink_Hover_Outline_Color);
+    outline-style: var(--fdLink_Hover_Outline_Style);
+  }
+
+  @include fd-active() {
+    color: var(--sapLink_Active_Color);
+
+    @include fd-focus() {
+      background-color: transparent;
+    }
+  }
+
+  &--inverted {
+    color: var(--sapLink_InvertedColor);
+    text-shadow: none;
+
+    @include fd-hover() {
+      color: var(--sapLink_InvertedColor);
+    }
+
+    @include fd-focus() {
+      outline-color: var(--sapContent_ContrastFocusColor);
+    }
+  }
+
+  &--subtle {
+    color: var(--sapLink_SubtleColor);
+  }
+
+  @include fd-disabled() {
+    opacity: var(--sapContent_DisabledOpacity);
+    color: var(--sapLinkColor);
+    pointer-events: none;
+  }
+
+  & > img {
+    vertical-align: bottom;
+  }
+}
+
+@mixin fd-action-cursor {
+  cursor: pointer;
+}
+
+@mixin fd-multiline-truncate($lineHeight: 1.4em, $lineCount: 1, $backgroundColor: transparent) {
+  position: relative;
+  line-height: $lineHeight;
+  max-height: $lineCount * $lineHeight;
+  overflow: hidden;
+  margin-right: -1em;
+  padding-right: 1em;
+
+  &::before {
+    position: absolute;
+    content: "...";
+    right: 0;
+    bottom: 1px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    background: $backgroundColor;
+  }
+}
+
+@mixin fd-flex($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  @content;
+}
+
+@mixin fd-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin fd-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @content;
+}
+
+@mixin fd-inline-flex-center {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  @content;
+}
+
+@mixin fd-flex-vertical-center {
+  display: flex;
+  align-items: center;
+  @content;
+}
+
+@mixin fd-flex-vertical-bottom {
+  display: flex;
+  align-items: flex-end;
+  @content;
+}
+
+@mixin fd-flex-horizontal-center {
+  display: flex;
+  justify-content: center;
+  @content;
+}
+
+@mixin fd-flex-stretch {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@mixin fd-flex-justify-content-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  @content;
+}
+
+@mixin fd-absolute-horizontal-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@mixin fd-position-center($position: absolute) {
+  position: $position;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin fd-screen-reader-only {
+  position: absolute;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  border: 0;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@mixin fd-remove-scrollbar {
+  &::-webkit-scrollbar {
+    display: none; // hide scrollbar but keep element scrollable for Chrome/Safari/Opera
+  }
+
+  -ms-overflow-style: none; // hide scrollbar but keep element scrollable for IE/Edge
+  scrollbar-width: none; // hide scrollbar on firefox
+}
+
+@mixin fd-typography($fd-size, $color: var(--sapGroup_TitleTextColor)) {
+  font-family: var(--sapFontHeaderFamily);
+  color: $color;
+  font-size: $fd-size;
+}
+
+@mixin fd-both-pseudo-selectors() {
+  &::after,
+  &::before {
+    @content;
+  }
+}
+
+@mixin fd-icon-overwrite {
+  &[class*=sap-icon] {
+    @content;
+  }
+}
+
+@mixin fd-icon-before-overwrite {
+  &[class*=sap-icon]::before,
+  &::before {
+    @content;
+  }
+}
+
+@mixin fd-icon-after-overwrite {
+  &[class*=sap-icon]::after,
+  &::after {
+    @content;
+  }
+}
+
+@mixin fd-set-width($width) {
+  width: $width;
+  min-width: $width;
+  max-width: $width;
+}
+
+@mixin fd-set-height($height) {
+  height: $height;
+  min-height: $height;
+  max-height: $height;
+}
+
+@mixin fd-set-min-height($height) {
+  height: $height;
+  min-height: $height;
+}
+
+@mixin fd-icon-selector() {
+  [class*="sap-icon"],
+  &[class*="sap-icon"] {
+    @content;
+  }
+}
+
+@mixin fd-icon-element-base {
+  @include fd-icon-selector() {
+    color: inherit;
+    background: inherit;
+    font-size: inherit;
+    border-radius: inherit;
+    line-height: 1;
+
+    @content;
+  }
+}
+
+@mixin fd-line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+}
+
+@mixin fd-reset-margins() {
+  margin: 0;
+}
+
+@mixin fd-reset-margins-x() {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@mixin fd-reset-margins-y() {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+@mixin fd-set-margins-x($left: 0, $right: 0) {
+  margin-left: $left;
+  margin-right: $right;
+
+  @include fd-rtl() {
+    margin-right: $left;
+    margin-left: $right;
+  }
+}
+
+@mixin fd-set-margins-x-equal($value: 0) {
+  margin-left: $value;
+  margin-right: $value;
+}
+
+@mixin fd-set-margins-y($top: 0, $bottom: 0) {
+  margin-top: $top;
+  margin-bottom: $bottom;
+}
+
+@mixin fd-set-margins-y-equal($value: 0) {
+  margin-top: $value;
+  margin-bottom: $value;
+}
+
+@mixin fd-set-margin-left($left: 0) {
+  margin-left: $left;
+
+  @include fd-rtl() {
+    margin-right: $left;
+    margin-left: 0;
+  }
+}
+
+@mixin fd-set-margin-right($right: 0) {
+  margin-right: $right;
+
+  @include fd-rtl() {
+    margin-right: 0;
+    margin-left: $right;
+  }
+}
+
+@mixin fd-reset-paddings() {
+  padding: 0;
+}
+
+@mixin fd-reset-paddings-x() {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@mixin fd-reset-paddings-y() {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@mixin fd-set-paddings-x($left: 0, $right: 0) {
+  padding-left: $left;
+  padding-right: $right;
+
+  @include fd-rtl() {
+    padding-right: $left;
+    padding-left: $right;
+  }
+}
+
+@mixin fd-set-paddings-x-equal($value: 0) {
+  padding-left: $value;
+  padding-right: $value;
+}
+
+@mixin fd-set-paddings-y($top: 0, $bottom: 0) {
+  padding-top: $top;
+  padding-bottom: $bottom;
+}
+
+@mixin fd-set-paddings-y-equal($value: 0) {
+  padding-top: $value;
+  padding-bottom: $value;
+}
+
+@mixin fd-set-padding-left($left: 0) {
+  padding-left: $left;
+
+  @include fd-rtl() {
+    padding-right: $left;
+    padding-left: 0;
+  }
+}
+
+@mixin fd-set-padding-right($right: 0) {
+  padding-right: $right;
+
+  @include fd-rtl() {
+    padding-right: 0;
+    padding-left: $right;
+  }
+}
+
+@mixin fd-set-position-right($right) {
+  right: $right;
+
+  @include fd-rtl() {
+    right: auto;
+    left: $right;
+  }
+}
+
+@mixin fd-set-border($color: transparent, $width: 0.0625rem, $type: solid) {
+  border: $width $type $color;
+}
+
+@mixin fd-set-position-right-pseudo($right) {
+  right: $right;
+
+  @include fd-rtl-pseudo() {
+    right: auto;
+    left: $right;
+  }
+}
+
+@mixin fd-set-position-left($left) {
+  left: $left;
+
+  @include fd-rtl() {
+    left: auto;
+    right: $left;
+  }
+}
+
+@mixin fd-set-position-left-pseudo($left) {
+  left: $left;
+
+  @include fd-rtl-pseudo() {
+    left: auto;
+    right: $left;
+  }
+}
+
+@mixin fd-set-equal-positions($value) {
+  top: $value;
+  right: $value;
+  bottom: $value;
+  left: $value;
+}
+
+/* Fully expanded pseudo element. Requires parent to have specified position */
+@mixin fd-pseudo-expand($position: "before") {
+  &::#{$position} {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @content;
+  }
+}
+
+// Media queries
+@mixin fd-media-sm() {
+  @media (max-width: 599px) {
+    @content;
+  }
+}
+
+@mixin fd-media-md() {
+  @media (min-width: 600px) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin fd-media-lg() {
+  @media (min-width: 1024px) and (max-width: 1439px) {
+    @content;
+  }
+}
+
+@mixin fd-media-xl() {
+  @media (min-width: 1440px) {
+    @content;
+  }
+}
+
+@mixin fd-apply-responsive-paddings() {
+  @include fd-media-sm() {
+    @include fd-set-paddings-x-equal(1rem);
+  }
+
+  @include fd-media-md() {
+    @include fd-set-paddings-x-equal(2rem);
+  }
+
+  @include fd-media-lg() {
+    @include fd-set-paddings-x-equal(2rem);
+  }
+
+  @include fd-media-xl() {
+    @include fd-set-paddings-x-equal(3rem);
+  }
+}
+
+@mixin fd-apply-border($borderColor, $borderWidth, $borderStyle) {
+  border-color: $borderColor;
+  border-width: $borderWidth;
+  border-style: $borderStyle;
+}
+
+@mixin fd-set-border-left($border) {
+  border-left: $border;
+
+  @include fd-rtl() {
+    border-left: none;
+    border-right: $border;
+  }
+}
+
+@mixin fd-set-border-right($border) {
+  border-right: $border;
+
+  @include fd-rtl() {
+    border-right: none;
+    border-left: $border;
+  }
+}
+
+@mixin fd-square($size) {
+  height: $size;
+  width: $size;
+  min-width: $size;
+}
+
+@mixin fd-scrollbar($borderRadius: '') {
+  @include fd-focus() {
+    outline: none;
+  }
+
+  scrollbar-color: var(--fdScrollbar_Thumb_Color) var(--fdScrollbar_Track_Color);
+
+  /** Chrome, WebKit */
+  &::-webkit-scrollbar {
+    width: var(--fdScrollbar_Dimension);
+    height: var(--fdScrollbar_Dimension);
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background-color: var(--fdScrollbar_Track_Color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    // In order to achieve space between scrollbar and scrollbar thumb, we need to use box shadow instead of background.
+    background-color: transparent;
+    box-shadow: inset 0 0 0 var(--fdScrollbar_Dimension) var(--fdScrollbar_Thumb_Color);
+    border: var(--fdScrollbar_Thumb_Offset) solid transparent;
+    border-radius: calc(var(--fdScrollbar_Thumb_Border_Radius) - var(--fdScrollbar_Thumb_Offset));
+
+    &:hover,
+    &:active {
+      box-shadow: inset 0 0 0 var(--fdScrollbar_Dimension) var(--fdScrollbar_Thumb_Hover_Color);
+    }
+  }
+
+  @if $borderRadius != '' {
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-corner {
+      border-radius: 0 $borderRadius $borderRadius 0;
+    }
+
+    @include fd-rtl() {
+      &::-webkit-scrollbar-track,
+      &::-webkit-scrollbar-corner {
+        border-radius: $borderRadius 0 0 $borderRadius;
+      }
+    }
+  }
+}

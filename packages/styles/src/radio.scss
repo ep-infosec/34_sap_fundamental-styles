@@ -1,0 +1,207 @@
+@import "./new-settings";
+@import "./mixins";
+
+/*!
+.fd-radio
+*/
+$block: #{$fd-namespace}-radio;
+
+%fd-radio-input-hidden {
+  position: absolute;
+  opacity: 0.0001;
+}
+
+.#{$block} {
+  @mixin fd-radio-label() {
+    + .#{$block}__label {
+      @content;
+    }
+  }
+
+  @mixin fd-radio-state($background-color, $text-color, $border-color, $border-size, $border-type, $hover-shadow) {
+    @include fd-radio-label() {
+      --fdRadio_Background_Color: #{$background-color};
+      --fdRadio_Hover_Background: var(--fdRadio_Hover_Background);
+      --fdRadio_Border_Width: #{$border-size};
+      --fdRadio_Border: #{$border-size $border-type $border-color};
+      --fdRadio_Hover_Shadow: #{$hover-shadow};
+      --fdRadio_Selected_Color: #{$border-color};
+      --fdRadio_Hover_Border_Color: #{$border-color};
+    }
+  }
+
+  @include fd-form-base();
+
+  @extend %fd-radio-input-hidden;
+
+  &__label {
+    @include fd-form-label();
+    @include fd-action-cursor();
+
+    line-height: 1rem;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: var(--fdRadio_Outer_Circle_Padding);
+    color: var(--sapField_TextColor);
+
+    &::before {
+      @include fd-form-radio-icon-base(var(--fdRadio_Inner_Circle_Diameter)) {
+        background-color: var(--fdRadio_Background_Color);
+        margin-right: var(--fdRadio_Outer_Circle_Padding);
+        color: var(--fdRadio_Selected_Color);
+        border: var(--fdRadio_Border);
+        border-radius: 50%;
+      }
+    }
+
+    &::after {
+      @include fd-square(var(--fdRadio_Inner_Content_Size));
+
+      top: var(--fdRadio_Inner_Content_Padding);
+      left: var(--fdRadio_Inner_Content_Padding);
+    }
+
+    @include fd-focus() {
+      outline: none;
+    }
+
+    @include fd-hover() {
+      &::before {
+        background-color: var(--fdRadio_Hover_Background);
+        border-width: var(--fdRadio_Border_Width);
+        border-color: var(--fdRadio_Hover_Border_Color);
+        box-shadow: var(--fdRadio_Hover_Box_Shadow);
+      }
+    }
+
+    @include fd-rtl() {
+      &::before {
+        margin-left: var(--fdRadio_Outer_Circle_Padding);
+        margin-right: 0;
+      }
+
+      &::after {
+        right: var(--fdRadio_Inner_Content_Padding);
+      }
+    }
+
+    @include fd-empty() {
+      padding: var(--fdRadio_Outer_Circle_Padding);
+      margin: 0;
+
+      &::before,
+      &::after {
+        margin-right: 0;
+        margin-left: 0;
+      }
+    }
+  }
+
+  &:checked + .#{$block}__label::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: var(--fdRadio_Selected_Color);
+  }
+
+  // states
+  &.is-warning,
+  &.is-alert {
+    @include fd-radio-state(
+      var(--sapField_WarningBackground),
+      var(--sapField_TextColor),
+      var(--sapField_WarningColor),
+      var(--sapField_WarningBorderWidth),
+      var(--fdRadio_Warning_Error_Information_Border_Style),
+      var(--fdRadio_Warning_Hover_Shadow)
+    );
+  }
+
+  &.is-error {
+    @include fd-radio-state(
+      var(--sapField_InvalidBackground),
+      var(--sapField_InvalidColor),
+      var(--sapField_InvalidColor),
+      var(--sapField_InvalidBorderWidth),
+      var(--fdRadio_Warning_Error_Information_Border_Style),
+      var(--fdRadio_Error_Hover_Shadow)
+    );
+  }
+
+  &.is-success {
+    @include fd-radio-state(
+      var(--sapField_SuccessBackground),
+      var(--sapField_SuccessColor),
+      var(--sapField_SuccessColor),
+      var(--sapField_BorderWidth),
+      solid,
+      var(--fdRadio_Success_Hover_Shadow)
+    );
+  }
+
+  &.is-information {
+    @include fd-radio-state(
+      var(--sapField_InformationBackground),
+      var(--sapField_InformationColor),
+      var(--sapField_InformationColor),
+      var(--sapField_InformationBorderWidth),
+      var(--fdRadio_Warning_Error_Information_Border_Style),
+      var(--fdRadio_Information_Hover_Shadow)
+    );
+  }
+
+  @include fd-readonly() {
+    @include fd-radio-state(
+      var(--sapField_ReadOnly_Background),
+      var(--sapContent_NonInteractiveIconColor),
+      var(--sapField_ReadOnly_BorderColor),
+      var(--fdRadio_Readonly_Border_Width),
+      var(--fdRadio_Readonly_Border_Type),
+      none
+    );
+  }
+
+  &[readonly],
+  &.is-readonly {
+    @include fd-radio-state(
+      var(--sapField_ReadOnly_Background),
+      var(--sapContent_NonInteractiveIconColor),
+      var(--sapField_ReadOnly_BorderColor),
+      var(--fdRadio_Readonly_Border_Width),
+      var(--fdRadio_Readonly_Border_Type),
+      none
+    );
+  }
+
+  @include fd-focus() {
+    @include fd-radio-label() {
+      @include fd-form-radio-focus(var(--fdRadio_Focus_Outline_Offset), var(--fdRadio_Outer_Circle_Padding), var(--fdRadio_Outline_Border_Radius));
+    }
+  }
+
+  @include fd-disabled() {
+    opacity: 0.0001;
+
+    @include fd-radio-label() {
+      pointer-events: none;
+      opacity: var(--sapContent_DisabledOpacity);
+    }
+  }
+
+  &--compact {
+    @include fd-radio-label() {
+      --fdRadio_Outer_Circle_Padding: var(--fdRadio_Compact_Outer_Circle_Padding);
+      --fdRadio_Inner_Circle_Diameter: var(--fdRadio_Compact_Inner_Circle_Diameter);
+      --fdRadio_Inner_Content_Size: var(--fdRadio_Inner_Content_Size_Compact);
+      --fdRadio_Inner_Content_Padding: var(--fdRadio_Inner_Content_Padding_Compact);
+    }
+
+    @include fd-focus() {
+      @include fd-radio-label() {
+        --fdRadio_Outer_Circle_Padding: var(--fdRadio_Compact_Outer_Circle_Padding);
+        --fdRadio_Outline_Border_Radius: var(--fdRadio_Compact_Outline_Border_radius);
+      }
+    }
+  }
+}

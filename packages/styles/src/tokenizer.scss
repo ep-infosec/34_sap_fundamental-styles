@@ -1,0 +1,142 @@
+@import "./new-settings";
+@import "./mixins";
+
+$block: #{$fd-namespace}-tokenizer;
+
+.#{$block} {
+  $fd-tokenizer-compact-spacing: 0.25rem;
+  $fd-tokenizer-spacing: 0.3125rem;
+  $fd-tokenizer-input-width: 3rem;
+  $fd-tokenizer-input-width-compact: 2rem;
+
+  @include fd-input-field-base();
+
+  width: 100%;
+  height: auto;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  border: none;
+  align-items: center;
+
+  @include fd-hover() {
+    box-shadow: none;
+  }
+
+  &__inner {
+    @include fd-remove-scrollbar();
+
+    padding: 0 $fd-tokenizer-spacing;
+    overflow: hidden;
+    float: right;
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .fd-token {
+    margin-right: $fd-tokenizer-spacing;
+    max-width: calc(100% - #{$fd-tokenizer-input-width} - #{$fd-tokenizer-spacing});
+
+    @include fd-rtl() {
+      margin: 0 0 0 $fd-tokenizer-spacing;
+    }
+  }
+
+  &__indicator {
+    @include fd-reset();
+
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .#{$block}__input {
+    background: transparent;
+
+    &.#{$fd-namespace}-input {
+      border: none;
+      padding: 0;
+      min-width: $fd-tokenizer-input-width;
+    }
+
+    &:first-child {
+      padding: 0 $fd-tokenizer-spacing;
+    }
+
+    &:last-child {
+      flex-basis: 100%;
+    }
+
+    @include fd-focus() {
+      @include fd-input-field-nested-reset();
+
+      border: none;
+      outline: none;
+    }
+
+    @include fd-hover() {
+      @include fd-input-field-nested-reset();
+    }
+  }
+
+  @include fd-focus() {
+    box-shadow: none;
+    border: none;
+    outline-offset: -0.0625rem;
+    outline-width: var(--sapContent_FocusWidth);
+    outline-color: var(--sapContent_FocusColor);
+    outline-style: var(--sapContent_FocusStyle);
+  }
+
+  &--compact {
+    @include fd-set-min-height($fd-input-field-height--compact);
+
+    .#{$block}__inner {
+      padding: 0 $fd-tokenizer-compact-spacing;
+    }
+
+    .#{$block}__input.#{$fd-namespace}-input {
+      min-width: $fd-tokenizer-input-width-compact;
+    }
+
+    .#{$block}__input:first-child {
+      padding: 0 $fd-tokenizer-compact-spacing;
+    }
+
+    .fd-token {
+      margin-right: $fd-tokenizer-compact-spacing;
+      max-width: calc(100% - #{$fd-tokenizer-input-width-compact} - #{$fd-tokenizer-compact-spacing});
+
+      @include fd-rtl() {
+        margin: 0 0 0 $fd-tokenizer-spacing;
+      }
+    }
+  }
+
+  &--readonly {
+    overflow: visible;
+    background-color: var(--sapField_ReadOnly_Background);
+    .#{$block}__inner {
+      overflow: visible;
+    }
+
+    .#{$block}__input {
+      @include fd-readonly() {
+        @include fd-input-field-nested-reset();
+
+        @include fd-focus() {
+          @include fd-input-field-nested-reset();
+        }
+      }
+    }
+  }
+
+  &--scrollable {
+    .#{$block}__inner {
+      justify-content: initial;
+      overflow: scroll;
+    }
+  }
+}
